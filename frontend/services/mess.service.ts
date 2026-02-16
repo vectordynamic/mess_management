@@ -11,6 +11,7 @@ export interface Mess {
 export interface MessMember {
     user_id: string;
     user_name?: string;
+    name?: string;
     roles: Role[];
     joined_at: string;
     status: 'active' | 'pending' | 'left';

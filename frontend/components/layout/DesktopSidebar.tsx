@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, DollarSign, Users, FileText, Settings, LogOut, Utensils, CreditCard } from 'lucide-react';
+import { ThemeToggle } from '@/components/shared/ThemeToggle';
 import { useLogout } from '@/hooks/useAuth';
 import type { User } from '@/types/auth';
 
@@ -21,12 +22,15 @@ export function DesktopSidebar({ user }: { user: User }) {
     const logout = useLogout();
 
     return (
-        <aside className="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-50">
+        <aside className="fixed inset-y-0 left-0 w-64 bg-card shadow-lg z-50 border-r border-border">
             <div className="flex flex-col h-full">
                 {/* Logo */}
-                <div className="p-6 border-b border-gray-200">
-                    <h1 className="text-2xl font-bold text-emerald-600">আমার ডেরা</h1>
-                    <p className="text-sm text-gray-600 mt-1">Mess Management</p>
+                <div className="p-6 border-b border-border flex justify-between items-center">
+                    <div>
+                        <h1 className="text-2xl font-bold text-primary">আমার ডেরা</h1>
+                        <p className="text-sm text-muted-foreground mt-1">Mess Management</p>
+                    </div>
+                    <ThemeToggle />
                 </div>
 
                 {/* Navigation */}
@@ -40,8 +44,8 @@ export function DesktopSidebar({ user }: { user: User }) {
                                 key={href}
                                 href={href}
                                 className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
-                                    ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-100 scale-105 font-bold'
-                                    : 'text-gray-600 hover:bg-emerald-50 hover:text-emerald-600'
+                                    ? 'bg-primary text-primary-foreground shadow-md font-bold'
+                                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                                     }`}
                             >
                                 <Icon className="w-5 h-5" />
@@ -52,19 +56,19 @@ export function DesktopSidebar({ user }: { user: User }) {
                 </nav>
 
                 {/* User Info & Logout */}
-                <div className="p-4 border-t border-gray-100">
-                    <div className="flex items-center space-x-3 px-4 py-3 mb-2">
-                        <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 font-bold border-2 border-white shadow-sm">
+                <div className="p-4 border-t border-border">
+                    <div className="flex items-center space-x-3 px-4 py-3 mb-2 rounded-xl bg-muted/50">
+                        <div className="w-10 h-10 bg-background rounded-full flex items-center justify-center text-primary font-bold border border-border shadow-sm">
                             {user.name[0].toUpperCase()}
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold text-gray-900 truncate">{user.name}</p>
-                            <p className="text-xs text-gray-500 truncate">{user.phone}</p>
+                            <p className="text-sm font-bold text-foreground truncate">{user.name}</p>
+                            <p className="text-xs text-muted-foreground truncate">{user.phone}</p>
                         </div>
                     </div>
                     <button
                         onClick={logout}
-                        className="flex items-center space-x-3 px-4 py-3 w-full text-gray-600 hover:bg-rose-50 hover:text-rose-600 rounded-xl transition-all duration-200 group font-medium"
+                        className="flex items-center space-x-3 px-4 py-3 w-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive rounded-xl transition-all duration-200 group font-medium"
                     >
                         <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" />
                         <span>Logout</span>

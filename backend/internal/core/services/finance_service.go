@@ -30,6 +30,20 @@ func (s *FinanceService) AddServiceCost(ctx context.Context, cost domain.Service
 	cost.CreatedBy = userID
 	cost.Status = "approved"
 
+	// Validate Shares if present
+	if len(cost.Shares) > 0 {
+		totalShares := 0.0
+		for _, s := range cost.Shares {
+			totalShares += s.Amount
+		}
+		// Allow small float tolerance if needed, but for currency exact match is preferred usually.
+		// Let's use a small epsilon for float comparison.
+		diff := cost.Amount - totalShares
+		if diff < -0.1 || diff > 0.1 {
+			return errors.New("sum of shares must equal total amount")
+		}
+	}
+
 	// TODO: Check Month Lock
 	return s.repo.AddServiceCost(ctx, &cost)
 }
@@ -355,7 +369,36 @@ func (s *FinanceService) GenerateMonthlySummary(ctx context.Context, messID, mon
 	if activeMemberCount == 0 {
 		activeMemberCount = 1
 	}
-	perPersonService := totalService / activeMemberCount
+
+	// Calculate Per-Person Service Cost (Old way: totalService / activeCount)
+	// New way: We need to calculate how much EACH user owes for service costs.
+	// Since costs can now be split unequally, we can't use a single "perPersonService" rate for everyone consistently if there are custom splits.
+	// We will calculate a map of UserID -> ServiceDebt
+	userServiceDebt := make(map[string]float64)
+
+	for _, cost := range serviceCosts {
+		if cost.Status != "approved" {
+			continue
+		}
+
+		if len(cost.Shares) > 0 {
+			// Custom Split
+			for _, share := range cost.Shares {
+				userServiceDebt[share.UserID] += share.Amount
+			}
+		} else {
+			// Equal Split (Default)
+			splitAmount := cost.Amount / activeMemberCount
+			for _, m := range mess.Members {
+				if m.Status == "active" {
+					userServiceDebt[m.UserID] += splitAmount
+				}
+			}
+		}
+	}
+
+	// perPersonService is now variable per user, so we remove the single variable definition
+	// and use the map lookup inside the loop.
 
 	summaries := make(map[string]MemberSummary)
 	for _, m := range mess.Members {
@@ -370,13 +413,16 @@ func (s *FinanceService) GenerateMonthlySummary(ctx context.Context, messID, mon
 		housePaid := userHousePaid[m.UserID]
 		mealPaid := userMealPaid[m.UserID]
 
+		// Use calculated service debt for this user
+		individualServiceCost := userServiceDebt[m.UserID]
+
 		// Refactored: No individual fixed rent. All house costs are shared.
-		totalDebit := perPersonService + mealCost
+		totalDebit := individualServiceCost + mealCost
 		// Credit is ONLY what they paid (Cash). Bazar expenses are from the fund, not personal credit here.
 		totalCredit := housePaid + mealPaid
 		balance := totalCredit - totalDebit
 
-		houseBalance := housePaid - perPersonService
+		houseBalance := housePaid - individualServiceCost
 		mealBalance := mealPaid - mealCost
 
 		userName := m.Name
@@ -394,7 +440,7 @@ func (s *FinanceService) GenerateMonthlySummary(ctx context.Context, messID, mon
 			Name:         userName,
 			TotalMeals:   mealsCount,
 			MealCost:     mealCost,
-			ServiceShare: perPersonService,
+			ServiceShare: individualServiceCost, // Variable now
 			BazarSpent:   bazarSpent,
 			HousePaid:    housePaid,
 			MealPaid:     mealPaid,

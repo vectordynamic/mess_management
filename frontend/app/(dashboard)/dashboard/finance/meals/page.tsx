@@ -152,11 +152,11 @@ export default function MealsPage() {
     if (!currentMessId) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[400px]">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                    <Utensils className="w-8 h-8 text-gray-400" />
+                <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                    <Utensils className="w-8 h-8 text-muted-foreground" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900">No Mess Selected</h3>
-                <p className="text-gray-500 mt-2">Please select a mess from the sidebar first</p>
+                <h3 className="text-xl font-bold text-foreground">No Mess Selected</h3>
+                <p className="text-muted-foreground mt-2">Please select a mess from the sidebar first</p>
             </div>
         );
     }
@@ -169,25 +169,25 @@ export default function MealsPage() {
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-black text-gray-900 tracking-tight">Daily Meal Sheet</h1>
-                    <p className="text-gray-500">Track and manage daily meal consumption counts</p>
+                    <h1 className="text-2xl font-black text-foreground tracking-tight">Daily Meal Sheet</h1>
+                    <p className="text-muted-foreground">Track and manage daily meal consumption counts</p>
                 </div>
                 <div className="flex items-center space-x-3">
-                    <div className="bg-white p-1 rounded-xl shadow-sm border border-gray-100 flex items-center">
+                    <div className="bg-card p-1 rounded-xl shadow-sm border border-border flex items-center">
                         <div className="pl-3 pr-1 py-1">
-                            <Calendar className="w-4 h-4 text-gray-400" />
+                            <Calendar className="w-4 h-4 text-muted-foreground" />
                         </div>
                         <input
                             type="month"
                             value={selectedMonth}
                             onChange={(e) => setSelectedMonth(e.target.value)}
-                            className="bg-transparent border-none rounded-lg px-3 py-1.5 text-sm font-bold text-gray-900 focus:ring-0 outline-none cursor-pointer"
+                            className="bg-transparent border-none rounded-lg px-3 py-1.5 text-sm font-bold text-foreground focus:ring-0 outline-none cursor-pointer"
                         />
                     </div>
                     <button
                         onClick={handleSave}
                         disabled={updateMutation.isPending}
-                        className="flex items-center space-x-2 bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold hover:bg-emerald-700 shadow-lg shadow-emerald-100 transition-all disabled:opacity-50"
+                        className="flex items-center space-x-2 bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold hover:bg-emerald-700 shadow-lg shadow-emerald-100 dark:shadow-none transition-all disabled:opacity-50"
                     >
                         <Save className="w-4 h-4" />
                         <span>{updateMutation.isPending ? 'Saving...' : 'Save Draft'}</span>
@@ -212,12 +212,12 @@ export default function MealsPage() {
                 />
             )}
 
-            <div className="bg-amber-50 rounded-2xl p-6 border border-amber-100">
-                <h4 className="font-bold text-amber-900 mb-2 flex items-center">
+            <div className="bg-amber-50 dark:bg-amber-900/10 rounded-2xl p-6 border border-amber-100 dark:border-amber-800">
+                <h4 className="font-bold text-amber-900 dark:text-amber-300 mb-2 flex items-center">
                     <Utensils className="w-4 h-4 mr-2" />
                     How it works
                 </h4>
-                <ul className="text-sm text-amber-800 space-y-1 opacity-80">
+                <ul className="text-sm text-amber-800 dark:text-amber-400/80 space-y-1 opacity-80">
                     <li>• Enter meal counts (1, 0.5, 0) for Lunch (L) and Dinner (D).</li>
                     <li>• Click on the <strong>Bazar</strong> cell to add/edit daily shopping costs.</li>
                     <li>• Only Managers can save batch meal updates permanently.</li>

@@ -7,10 +7,10 @@ import { messService } from '@/services/mess.service';
 import type { Role, Mess } from '@/services/mess.service';
 
 const roleConfig: Record<Role, { label: string; icon: any; color: string; bgColor: string }> = {
-    admin: { label: 'Admin', icon: Crown, color: 'text-purple-700', bgColor: 'bg-purple-100' },
-    manager: { label: 'Manager', icon: Shield, color: 'text-blue-700', bgColor: 'bg-blue-100' },
-    meal_manager: { label: 'Meal Manager', icon: ChefHat, color: 'text-orange-700', bgColor: 'bg-orange-100' },
-    member: { label: 'Member', icon: Users, color: 'text-gray-700', bgColor: 'bg-gray-100' },
+    admin: { label: 'Admin', icon: Crown, color: 'text-purple-700 dark:text-purple-400', bgColor: 'bg-purple-100 dark:bg-purple-900/30' },
+    manager: { label: 'Manager', icon: Shield, color: 'text-blue-700 dark:text-blue-400', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
+    meal_manager: { label: 'Meal Manager', icon: ChefHat, color: 'text-orange-700 dark:text-orange-400', bgColor: 'bg-orange-100 dark:bg-orange-900/30' },
+    member: { label: 'Member', icon: Users, color: 'text-gray-700 dark:text-gray-400', bgColor: 'bg-gray-100 dark:bg-gray-800' },
 };
 
 export default function ProfilePage() {
@@ -40,7 +40,7 @@ export default function ProfilePage() {
     if (!user) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             </div>
         );
     }
@@ -57,48 +57,48 @@ export default function ProfilePage() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
-                <p className="text-gray-600 mt-1">Manage your account information</p>
+                <h1 className="text-2xl font-bold text-foreground">Profile</h1>
+                <p className="text-muted-foreground mt-1">Manage your account information</p>
             </div>
 
             {/* Profile Card */}
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-border">
                 {/* Header with gradient */}
                 <div className="bg-gradient-to-r from-emerald-500 to-teal-600 h-32"></div>
 
                 <div className="px-6 pb-6">
                     {/* Avatar */}
                     <div className="flex items-end -mt-16 mb-6">
-                        <div className="w-32 h-32 bg-white rounded-full border-4 border-white shadow-xl flex items-center justify-center">
-                            <span className="text-4xl font-bold text-emerald-600">{user.name[0]}</span>
+                        <div className="w-32 h-32 bg-card rounded-full border-4 border-card shadow-xl flex items-center justify-center">
+                            <span className="text-4xl font-bold text-primary">{user.name[0]}</span>
                         </div>
                     </div>
 
                     {/* User Info */}
                     <div className="space-y-4">
                         <div>
-                            <h2 className="text-2xl font-bold text-gray-900">{user.name}</h2>
-                            <p className="text-sm text-gray-500 mt-1">Member ID: {user.id}</p>
+                            <h2 className="text-2xl font-bold text-foreground">{user.name}</h2>
+                            <p className="text-sm text-muted-foreground mt-1">Member ID: {user.id}</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
-                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                    <Phone className="w-5 h-5 text-blue-600" />
+                            <div className="flex items-center space-x-3 p-4 bg-muted/50 rounded-lg">
+                                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                                    <Phone className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                 </div>
                                 <div>
-                                    <p className="text-sm text-gray-600">Phone Number</p>
-                                    <p className="font-semibold text-gray-900">{user.phone}</p>
+                                    <p className="text-sm text-muted-foreground">Phone Number</p>
+                                    <p className="font-semibold text-foreground">{user.phone}</p>
                                 </div>
                             </div>
 
-                            <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
-                                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                                    <Users className="w-5 h-5 text-purple-600" />
+                            <div className="flex items-center space-x-3 p-4 bg-muted/50 rounded-lg">
+                                <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                                    <Users className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                                 </div>
                                 <div>
-                                    <p className="text-sm text-gray-600">Active Messes</p>
-                                    <p className="font-semibold text-gray-900">{user.messes?.length || 0}</p>
+                                    <p className="text-sm text-muted-foreground">Active Messes</p>
+                                    <p className="font-semibold text-foreground">{user.messes?.length || 0}</p>
                                 </div>
                             </div>
                         </div>
@@ -108,15 +108,15 @@ export default function ProfilePage() {
 
             {/* Mess Memberships with Roles */}
             {userMesses.length > 0 && (
-                <div className="bg-white rounded-xl shadow-sm p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Messes & Roles</h3>
+                <div className="bg-card rounded-xl shadow-sm p-6 border border-border">
+                    <h3 className="text-lg font-semibold text-foreground mb-4">Your Messes & Roles</h3>
                     <div className="space-y-4">
                         {userMesses.map((mess) => (
-                            <div key={mess.id} className="border border-gray-200 rounded-lg p-4 hover:border-emerald-500 transition-colors">
+                            <div key={mess.id} className="border border-border rounded-lg p-4 hover:border-primary transition-colors">
                                 <div className="flex items-start justify-between">
                                     <div className="flex-1">
-                                        <h4 className="font-semibold text-gray-900 mb-2">{mess.name}</h4>
-                                        <p className="text-sm text-gray-500 mb-3">ID: {mess.id}</p>
+                                        <h4 className="font-semibold text-foreground mb-2">{mess.name}</h4>
+                                        <p className="text-sm text-muted-foreground mb-3">ID: {mess.id}</p>
 
                                         {/* Role Badges */}
                                         <div className="flex flex-wrap gap-2">
@@ -142,8 +142,8 @@ export default function ProfilePage() {
                         ))}
                     </div>
 
-                    <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                        <p className="text-sm text-blue-800">
+                    <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <p className="text-sm text-blue-800 dark:text-blue-300">
                             <strong>Note:</strong> You can have multiple roles in a mess. For example, you can be both an Admin and a Meal Manager.
                         </p>
                     </div>
@@ -151,10 +151,10 @@ export default function ProfilePage() {
             )}
 
             {/* Settings Section */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Settings</h3>
+            <div className="bg-card rounded-xl shadow-sm p-6 border border-border">
+                <h3 className="text-lg font-semibold text-foreground mb-4">Account Settings</h3>
                 <div className="text-center py-8">
-                    <p className="text-gray-500">Account settings coming soon</p>
+                    <p className="text-muted-foreground">Account settings coming soon</p>
                 </div>
             </div>
         </div>

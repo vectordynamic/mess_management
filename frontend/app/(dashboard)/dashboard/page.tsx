@@ -23,7 +23,7 @@ export default function DashboardPage() {
     return (
         <div className="space-y-6">
             {/* Welcome Section */}
-            <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-6 text-white">
+            <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-6 text-white shadow-lg">
                 <h2 className="text-2xl font-bold mb-2">Welcome back, {user?.name}!</h2>
                 <p className="opacity-90">Manage your mess finances and track meals easily</p>
             </div>
@@ -31,13 +31,16 @@ export default function DashboardPage() {
             {/* Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {stats.map((stat) => (
-                    <div key={stat.label} className="bg-white rounded-xl p-6 shadow-sm">
+                    <div key={stat.label} className="bg-card rounded-xl p-6 shadow-sm border border-border">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-gray-600 text-sm">{stat.label}</p>
-                                <p className="text-2xl font-bold text-gray-900 mt-1">{stat.value}</p>
+                                <p className="text-muted-foreground text-sm font-medium">{stat.label}</p>
+                                <p className="text-2xl font-bold text-foreground mt-1">{stat.value}</p>
                             </div>
-                            <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}>
+                            <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${stat.color.includes('blue') ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' :
+                                    stat.color.includes('emerald') ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' :
+                                        'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400'
+                                }`}>
                                 <stat.icon className="w-6 h-6" />
                             </div>
                         </div>
@@ -47,29 +50,33 @@ export default function DashboardPage() {
 
             {/* Quick Actions */}
             <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     {quickActions.map((action) => (
                         <Link
                             key={action.label}
                             href={action.href}
-                            className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
+                            className="bg-card rounded-xl p-6 shadow-sm hover:shadow-md transition-all border border-border hover:bg-muted/50"
                         >
-                            <div className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center mb-3`}>
-                                <action.icon className="w-6 h-6 text-white" />
+                            <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-3 ${action.color === 'bg-emerald-600' ? 'bg-emerald-600 text-white' :
+                                    action.color === 'bg-blue-600' ? 'bg-blue-600 text-white' :
+                                        action.color === 'bg-orange-600' ? 'bg-orange-600 text-white' :
+                                            'bg-purple-600 text-white'
+                                }`}>
+                                <action.icon className="w-6 h-6" />
                             </div>
-                            <p className="font-medium text-gray-900">{action.label}</p>
+                            <p className="font-medium text-foreground">{action.label}</p>
                         </Link>
                     ))}
                 </div>
             </div>
 
             {/* Recent Activity */}
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+            <div className="bg-card rounded-xl p-6 shadow-sm border border-border">
+                <h3 className="text-lg font-semibold text-foreground mb-4">Recent Activity</h3>
                 <div className="text-center py-8">
-                    <p className="text-gray-500">No recent activity</p>
-                    <p className="text-sm text-gray-400 mt-1">Your mess activities will appear here</p>
+                    <p className="text-muted-foreground">No recent activity</p>
+                    <p className="text-sm text-muted-foreground/70 mt-1">Your mess activities will appear here</p>
                 </div>
             </div>
         </div>

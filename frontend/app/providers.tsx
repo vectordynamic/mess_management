@@ -6,34 +6,39 @@ import { Toaster } from 'react-hot-toast';
 import { queryClient } from '@/lib/query-client';
 import { MessProvider } from '@/contexts/MessContext';
 
+import { ThemeProvider } from '@/contexts/ThemeContext';
+
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
         <QueryClientProvider client={queryClient}>
-            <MessProvider>
-                {children}
-            </MessProvider>
-            <Toaster
-                position="top-right"
-                toastOptions={{
-                    duration: 3000,
-                    style: {
-                        background: '#fff',
-                        color: '#363636',
-                    },
-                    success: {
-                        iconTheme: {
-                            primary: '#10b981',
-                            secondary: '#fff',
+            <ThemeProvider defaultTheme="dark" storageKey="amar-dera-theme">
+                <MessProvider>
+                    {children}
+                </MessProvider>
+                <Toaster
+                    position="top-right"
+                    toastOptions={{
+                        duration: 3000,
+                        style: {
+                            background: 'var(--popover)',
+                            color: 'var(--popover-foreground)',
+                            border: '1px solid var(--border)',
                         },
-                    },
-                    error: {
-                        iconTheme: {
-                            primary: '#ef4444',
-                            secondary: '#fff',
+                        success: {
+                            iconTheme: {
+                                primary: 'var(--primary)',
+                                secondary: 'var(--primary-foreground)',
+                            },
                         },
-                    },
-                }}
-            />
+                        error: {
+                            iconTheme: {
+                                primary: 'var(--destructive)',
+                                secondary: 'var(--destructive-foreground)',
+                            },
+                        },
+                    }}
+                />
+            </ThemeProvider>
             <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
     );

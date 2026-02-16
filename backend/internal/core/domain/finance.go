@@ -6,14 +6,20 @@ import (
 )
 
 // --- Service Costs (Fixed) ---
+type CostShare struct {
+	UserID string  `bson:"user_id" json:"user_id"`
+	Amount float64 `bson:"amount" json:"amount"`
+}
+
 type ServiceCost struct {
-	ID        string  `bson:"_id" json:"id"`
-	MessID    string  `bson:"mess_id" json:"mess_id"`
-	Month     string  `bson:"month" json:"month"` // YYYY-MM
-	Name      string  `bson:"name" json:"name"`   // Gas, WiFi, etc.
-	Amount    float64 `bson:"amount" json:"amount"`
-	CreatedBy string  `bson:"created_by" json:"created_by"`
-	Status    string  `bson:"status" json:"status"` // pending, approved
+	ID        string      `bson:"_id" json:"id"`
+	MessID    string      `bson:"mess_id" json:"mess_id"`
+	Month     string      `bson:"month" json:"month"` // YYYY-MM
+	Name      string      `bson:"name" json:"name"`   // Gas, WiFi, etc.
+	Amount    float64     `bson:"amount" json:"amount"`
+	Shares    []CostShare `bson:"shares,omitempty" json:"shares,omitempty"` // Optional: Custom split
+	CreatedBy string      `bson:"created_by" json:"created_by"`
+	Status    string      `bson:"status" json:"status"` // pending, approved
 }
 
 // --- Payments (Cash In) ---

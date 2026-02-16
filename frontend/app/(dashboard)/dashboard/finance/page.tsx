@@ -14,6 +14,7 @@ import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { NoMessView } from '@/components/shared/NoMessView';
 import { formatCurrency } from '@/lib/formatters';
+import AddCostModal from '@/components/finance/AddCostModal';
 
 export default function FinanceOverviewPage() {
     const { currentMessId, isManager, isMemberOfAnyMess } = useMessContext();
@@ -64,33 +65,33 @@ export default function FinanceOverviewPage() {
             {/* Header Area */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-gray-900 tracking-tight">Finance Overview</h1>
-                    <p className="text-gray-500 font-medium">Monthly Consolidated Balance Sheet</p>
+                    <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">Finance Overview</h1>
+                    <p className="text-muted-foreground font-medium text-sm sm:text-base">Monthly Consolidated Balance Sheet</p>
                 </div>
 
-                <div className="flex items-center space-x-3 bg-white p-1.5 rounded-2xl shadow-sm border border-gray-100">
+                <div className="flex items-center space-x-3 bg-card p-1.5 rounded-2xl shadow-sm border border-border">
                     <div className="pl-3 pr-1 py-1">
-                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Active Period</span>
+                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Active Period</span>
                     </div>
                     <input
                         type="month"
                         value={selectedMonth}
                         onChange={(e) => setSelectedMonth(e.target.value)}
-                        className="bg-gray-50 border-none rounded-xl px-4 py-2 text-sm font-bold text-gray-900 focus:ring-2 focus:ring-emerald-500 outline-none transition-all cursor-pointer"
+                        className="bg-muted border-none rounded-xl px-4 py-2 text-sm font-bold text-foreground focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer placeholder:text-muted-foreground/50"
                     />
                 </div>
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="bg-card p-4 sm:p-6 rounded-2xl shadow-sm border border-border">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                     <div>
-                        <h2 className="text-lg font-bold text-gray-900">Quick Actions</h2>
-                        <p className="text-gray-500 text-sm">Manage your mess finances efficiently</p>
+                        <h2 className="text-lg font-bold text-foreground">Quick Actions</h2>
+                        <p className="text-muted-foreground text-sm">Manage your mess finances efficiently</p>
                     </div>
-                    <div className="flex flex-wrap gap-3">
-                        <Link href={`/dashboard/finance/payments`}>
-                            <button className="flex items-center space-x-2 bg-emerald-600 text-white px-5 py-3 rounded-xl text-sm font-bold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-100 hover:-translate-y-0.5 active:translate-y-0">
+                    <div className="flex flex-wrap gap-3 w-full md:w-auto">
+                        <Link href={`/dashboard/finance/payments`} className="flex-1 md:flex-none">
+                            <button className="w-full md:w-auto flex items-center justify-center space-x-2 bg-emerald-600 dark:bg-emerald-700 text-white px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl text-sm font-bold hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/20 hover:-translate-y-0.5 active:translate-y-0">
                                 <CreditCard className="w-4 h-4" />
                                 <span>Record Payment</span>
                             </button>
@@ -102,14 +103,14 @@ export default function FinanceOverviewPage() {
                                     toast.error(
                                         (t) => (
                                             <div className="flex flex-col gap-2">
-                                                <span className="font-extrabold text-rose-900">Manager Access Required</span>
-                                                <div className="text-xs text-rose-800 opacity-90 leading-relaxed font-medium">
+                                                <span className="font-extrabold text-destructive">Manager Access Required</span>
+                                                <div className="text-xs text-destructive/90 leading-relaxed font-medium">
                                                     Only managers can add mess service costs. Visit your mess details to see who are the authorized managers.
                                                 </div>
                                                 <Link
                                                     href={`/dashboard/mess/${currentMessId}`}
                                                     onClick={() => toast.dismiss(t.id)}
-                                                    className="bg-white text-rose-600 px-4 py-2 rounded-xl text-[10px] font-black tracking-tight text-center border border-rose-200 hover:bg-rose-50 transition-all uppercase shadow-md active:scale-95"
+                                                    className="bg-background text-destructive px-4 py-2 rounded-xl text-[10px] font-black tracking-tight text-center border border-destructive/20 hover:bg-destructive/10 transition-all uppercase shadow-md active:scale-95"
                                                 >
                                                     View Members & Managers
                                                 </Link>
@@ -119,8 +120,9 @@ export default function FinanceOverviewPage() {
                                             duration: 6000,
                                             position: 'top-center',
                                             style: {
-                                                border: '1px solid #fee2e2',
-                                                background: '#fff1f2',
+                                                border: '1px solid var(--destructive)',
+                                                background: 'var(--background)',
+                                                color: 'var(--foreground)',
                                                 padding: '16px',
                                                 borderRadius: '24px',
                                                 boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)'
@@ -131,7 +133,7 @@ export default function FinanceOverviewPage() {
                                 }
                                 setShowAddCost(true);
                             }}
-                            className="flex items-center space-x-2 bg-indigo-600 text-white px-5 py-3 rounded-xl text-sm font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 hover:-translate-y-0.5 active:translate-y-0"
+                            className="flex-1 md:flex-none w-full md:w-auto flex items-center justify-center space-x-2 bg-indigo-600 dark:bg-indigo-700 text-white px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl text-sm font-bold hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-500/20 hover:-translate-y-0.5 active:translate-y-0"
                         >
                             <Plus className="w-4 h-4" />
                             <span>Add New Cost</span>
@@ -142,7 +144,7 @@ export default function FinanceOverviewPage() {
 
             {/* Visual Logic Help Box */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div className="bg-blue-600 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
+                <div className="bg-blue-600 dark:bg-blue-900 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
                     <div className="flex items-center space-x-3 mb-4">
                         <Home className="w-6 h-6" />
@@ -153,17 +155,13 @@ export default function FinanceOverviewPage() {
                             <span className="text-xs font-bold text-blue-100 uppercase">Total Monthly Bills</span>
                             <span className="text-xl font-black">{formatCurrency(summary?.total_service_cost || 0)}</span>
                         </div>
-                        <div className="flex justify-between items-center text-sm">
-                            <span className="font-medium text-blue-100">Divided by {activeMemberCount} Active Members</span>
-                            <div className="flex items-center space-x-2">
-                                <span className="text-xs font-bold text-blue-200">Result:</span>
-                                <span className="font-black bg-white/20 px-3 py-1 rounded-lg">{formatCurrency((summary?.total_service_cost || 0) / activeMemberCount)} / person</span>
-                            </div>
+                        <div className="text-sm font-medium text-blue-100">
+                            <span className="font-black text-white px-2 italic">Variable Split</span> based on cost settings.
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-orange-600 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
+                <div className="bg-orange-600 dark:bg-orange-900 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
                     <div className="flex items-center space-x-3 mb-4">
                         <Utensils className="w-6 h-6" />
@@ -185,50 +183,45 @@ export default function FinanceOverviewPage() {
             <div className="grid grid-cols-1 gap-12">
 
                 {/* House Account Summary */}
-                <div className="bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="px-8 py-6 bg-gray-50 flex items-center justify-between border-b border-gray-100">
+                <div className="bg-card rounded-[40px] shadow-sm border border-border overflow-hidden">
+                    <div className="px-6 py-6 sm:px-8 bg-muted/30 flex items-center justify-between border-b border-border">
                         <div className="flex items-center space-x-4">
-                            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
                                 <Home className="w-6 h-6" />
                             </div>
-                            <div>
-                                <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">House Account Status</h3>
-                                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">Share based on **Rent + Utilities**</p>
+                            <div className="flex-1">
+                                <h3 className="text-xl font-black text-foreground uppercase tracking-tight leading-none mb-1">House Account Status</h3>
+                                <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest break-words">Share based on Rent + Utilities</p>
                             </div>
                         </div>
                         <div className="md:flex items-center hidden space-x-6 text-right">
                             <div>
-                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active Members</p>
-                                <p className="text-lg font-black text-blue-600">{activeMemberCount}</p>
-                            </div>
-                            <div className="w-px h-8 bg-gray-200"></div>
-                            <div>
-                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Individual Share</p>
-                                <p className="text-lg font-black text-gray-900 border-b-2 border-emerald-500">{formatCurrency((summary?.total_service_cost || 0) / activeMemberCount)}</p>
+                                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Active Members</p>
+                                <p className="text-lg font-black text-primary">{activeMemberCount}</p>
                             </div>
                         </div>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="bg-gray-50/50 text-gray-500 text-[10px] font-black uppercase tracking-widest border-b border-gray-100">
-                                    <th className="px-8 py-4">Participant</th>
-                                    <th className="px-6 py-4 text-right">Debit (Share)</th>
-                                    <th className="px-6 py-4 text-right">Credit (Paid)</th>
-                                    <th className="px-8 py-4 text-right">Consolidated Balance</th>
+                                <tr className="bg-muted/50 text-muted-foreground text-[10px] font-black uppercase tracking-widest border-b border-border">
+                                    <th className="px-6 sm:px-8 py-4 whitespace-nowrap">Participant</th>
+                                    <th className="px-6 py-4 text-right whitespace-nowrap">Debit (Share)</th>
+                                    <th className="px-6 py-4 text-right whitespace-nowrap">Credit (Paid)</th>
+                                    <th className="px-6 sm:px-8 py-4 text-right whitespace-nowrap">Consolidated Balance</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100">
+                            <tbody className="divide-y divide-border">
                                 {memberList.map((m) => (
-                                    <tr key={`${m.user_id}_house`} className="hover:bg-blue-50/10 transition-colors group">
-                                        <td className="px-8 py-6">
-                                            <span className="font-black text-gray-900 block text-lg uppercase">{m.name || 'Unknown'}</span>
-                                            <span className="text-[10px] text-gray-400 uppercase font-bold tracking-tighter">Verified Member</span>
+                                    <tr key={`${m.user_id}_house`} className="hover:bg-muted/50 transition-colors group">
+                                        <td className="px-6 sm:px-8 py-6">
+                                            <span className="font-black text-foreground block text-lg uppercase whitespace-nowrap">{m.name || 'Unknown'}</span>
+                                            <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Verified Member</span>
                                         </td>
-                                        <td className="px-6 py-6 text-right font-black text-gray-500">{formatCurrency(m.service_share || 0)}</td>
-                                        <td className="px-6 py-6 text-right font-black text-emerald-600 text-lg">{formatCurrency(m.house_paid || 0)}</td>
-                                        <td className="px-8 py-6 text-right">
-                                            <span className={`px-5 py-2.5 rounded-[18px] text-sm font-black shadow-sm ring-1 ${m.house_balance >= 0 ? 'bg-emerald-500 text-white ring-emerald-400' : 'bg-rose-500 text-white ring-rose-400'}`}>
+                                        <td className="px-6 py-6 text-right font-black text-muted-foreground whitespace-nowrap">{formatCurrency(m.service_share || 0)}</td>
+                                        <td className="px-6 py-6 text-right font-black text-emerald-600 text-lg whitespace-nowrap">{formatCurrency(m.house_paid || 0)}</td>
+                                        <td className="px-6 sm:px-8 py-6 text-right whitespace-nowrap">
+                                            <span className={`px-4 py-2 sm:px-5 sm:py-2.5 rounded-[18px] text-sm font-black shadow-sm ring-1 ${m.house_balance >= 0 ? 'bg-emerald-500 text-white ring-emerald-400' : 'bg-rose-500 text-white ring-rose-400'}`}>
                                                 {m.house_balance >= 0 ? '+' : ''}{formatCurrency(m.house_balance || 0)}
                                             </span>
                                         </td>
@@ -240,55 +233,55 @@ export default function FinanceOverviewPage() {
                 </div>
 
                 {/* Meal Account Summary */}
-                <div className="bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="px-8 py-6 bg-gray-50 flex items-center justify-between border-b border-gray-100">
+                <div className="bg-card rounded-[40px] shadow-sm border border-border overflow-hidden">
+                    <div className="px-6 py-6 sm:px-8 bg-muted/30 flex items-center justify-between border-b border-border">
                         <div className="flex items-center space-x-4">
-                            <div className="w-12 h-12 bg-orange-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-orange-200">
+                            <div className="w-12 h-12 bg-orange-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-orange-500/20">
                                 <Utensils className="w-6 h-6" />
                             </div>
-                            <div>
-                                <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">Meal Account Status</h3>
-                                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">Share based on **Actual Consumption**</p>
+                            <div className="flex-1">
+                                <h3 className="text-xl font-black text-foreground uppercase tracking-tight leading-none mb-1">Meal Account Status</h3>
+                                <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Share based on Consumption</p>
                             </div>
                         </div>
                         <div className="md:flex items-center hidden space-x-6 text-right">
                             <div>
-                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Current Meal Rate</p>
+                                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Current Meal Rate</p>
                                 <p className="text-lg font-black text-orange-600">{formatCurrency(summary?.meal_rate || 0)}</p>
                             </div>
-                            <div className="w-px h-8 bg-gray-200"></div>
+                            <div className="w-px h-8 bg-border"></div>
                             <div>
-                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Mess Meals</p>
-                                <p className="text-lg font-black text-gray-900">{summary?.total_meals?.toString()}</p>
+                                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Total Mess Meals</p>
+                                <p className="text-lg font-black text-foreground">{summary?.total_meals?.toString()}</p>
                             </div>
                         </div>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="bg-orange-50/20 text-orange-900 text-[10px] font-black uppercase tracking-widest border-b border-orange-100">
-                                    <th className="px-8 py-4">Participant</th>
-                                    <th className="px-6 py-4 text-center">Meals Eaten</th>
-                                    <th className="px-6 py-4 text-right">Debit (Cost)</th>
-                                    <th className="px-6 py-4 text-right">Total Paid</th>
-                                    <th className="px-8 py-4 text-right">Final Balance</th>
+                                <tr className="bg-muted/50 text-muted-foreground text-[10px] font-black uppercase tracking-widest border-b border-border">
+                                    <th className="px-6 sm:px-8 py-4 whitespace-nowrap">Participant</th>
+                                    <th className="px-6 py-4 text-center whitespace-nowrap">Meals Eaten</th>
+                                    <th className="px-6 py-4 text-right whitespace-nowrap">Debit (Cost)</th>
+                                    <th className="px-6 py-4 text-right whitespace-nowrap">Total Paid</th>
+                                    <th className="px-6 sm:px-8 py-4 text-right whitespace-nowrap">Final Balance</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-100">
+                            <tbody className="divide-y divide-border">
                                 {memberList.map((m) => (
-                                    <tr key={`${m.user_id}_meal`} className="hover:bg-orange-50/10 transition-colors">
-                                        <td className="px-8 py-6 font-black text-gray-900 text-lg uppercase">{m.name || 'Unknown'}</td>
-                                        <td className="px-6 py-6 text-center">
-                                            <span className="font-black bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs">
+                                    <tr key={`${m.user_id}_meal`} className="hover:bg-muted/50 transition-colors">
+                                        <td className="px-6 sm:px-8 py-6 font-black text-foreground text-lg uppercase whitespace-nowrap">{m.name || 'Unknown'}</td>
+                                        <td className="px-6 py-6 text-center whitespace-nowrap">
+                                            <span className="font-black bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 px-3 py-1 rounded-full text-xs">
                                                 {m.total_meals} meals
                                             </span>
                                         </td>
-                                        <td className="px-6 py-6 text-right font-black text-gray-500">{formatCurrency(m.meal_cost || 0)}</td>
-                                        <td className="px-6 py-6 text-right">
+                                        <td className="px-6 py-6 text-right font-black text-muted-foreground whitespace-nowrap">{formatCurrency(m.meal_cost || 0)}</td>
+                                        <td className="px-6 py-6 text-right whitespace-nowrap">
                                             <span className="font-black text-emerald-600 text-lg">{formatCurrency(m.meal_paid)}</span>
                                         </td>
-                                        <td className="px-8 py-6 text-right">
-                                            <span className={`px-5 py-2.5 rounded-[18px] text-sm font-black shadow-sm ring-1 ${m.meal_balance >= 0 ? 'bg-orange-500 text-white ring-orange-400' : 'bg-rose-500 text-white ring-rose-400'}`}>
+                                        <td className="px-6 sm:px-8 py-6 text-right whitespace-nowrap">
+                                            <span className={`px-4 py-2 sm:px-5 sm:py-2.5 rounded-[18px] text-sm font-black shadow-sm ring-1 ${m.meal_balance >= 0 ? 'bg-orange-500 text-white ring-orange-400' : 'bg-rose-500 text-white ring-rose-400'}`}>
                                                 {m.meal_balance >= 0 ? '+' : ''}{formatCurrency(m.meal_balance || 0)}
                                             </span>
                                         </td>
@@ -300,26 +293,26 @@ export default function FinanceOverviewPage() {
                 </div>
 
                 {/* Individual Service Breakdown Card */}
-                <div className="lg:col-span-1 bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full">
-                    <div className="p-8 bg-gray-900 border-b border-gray-800 flex items-center justify-between text-white">
+                <div className="lg:col-span-1 bg-card rounded-[40px] shadow-sm border border-border overflow-hidden flex flex-col h-full">
+                    <div className="p-8 bg-muted/50 border-b border-border flex items-center justify-between text-foreground">
                         <div className="flex items-center space-x-3">
-                            <Info className="w-5 h-5 text-emerald-400" />
+                            <Info className="w-5 h-5 text-emerald-500" />
                             <h3 className="font-black uppercase text-xs tracking-widest">Monthly Service Costs (Total)</h3>
                         </div>
                     </div>
-                    <div className="divide-y divide-gray-100 flex-1">
+                    <div className="divide-y divide-border flex-1">
                         {serviceCosts?.length > 0 ? (
                             serviceCosts.filter(c => c.status === 'approved').map(c => (
-                                <div key={c.id} className="flex justify-between items-center p-6 group hover:bg-gray-50 transition-colors">
+                                <div key={c.id} className="flex justify-between items-center p-6 group hover:bg-muted/30 transition-colors">
                                     <div>
-                                        <p className="font-black text-gray-800 text-lg">{c.name}</p>
-                                        <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">{format(new Date(selectedMonth + '-01'), 'MMMM yyyy')}</p>
+                                        <p className="font-black text-foreground text-lg">{c.name}</p>
+                                        <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{format(new Date(selectedMonth + '-01'), 'MMMM yyyy')}</p>
                                     </div>
-                                    <span className="font-black text-emerald-600 bg-emerald-50 px-4 py-2 rounded-2xl ring-1 ring-emerald-100 scale-110 group-hover:scale-125 transition-transform">{formatCurrency(c.amount || 0)}</span>
+                                    <span className="font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-2 rounded-2xl ring-1 ring-emerald-100 dark:ring-emerald-900 scale-110 group-hover:scale-125 transition-transform">{formatCurrency(c.amount || 0)}</span>
                                 </div>
                             ))
                         ) : (
-                            <div className="p-16 text-center text-gray-400 italic">No approved service costs this month</div>
+                            <div className="p-16 text-center text-muted-foreground italic">No approved service costs this month</div>
                         )}
                     </div>
                     <div className="p-8 bg-emerald-600 text-white text-center font-black uppercase tracking-widest flex items-center justify-between">
@@ -328,6 +321,13 @@ export default function FinanceOverviewPage() {
                     </div>
                 </div>
             </div>
-        </div>
+
+
+            <AddCostModal
+                isOpen={showAddCost}
+                onClose={() => setShowAddCost(false)}
+                currentMonth={selectedMonth}
+            />
+        </div >
     );
 }

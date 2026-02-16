@@ -7,6 +7,7 @@ export interface ServiceCost {
     name: string;
     amount: number;
     created_by?: string;
+    shares?: { user_id: string; amount: number }[];
     status: 'pending' | 'approved';
 }
 

@@ -74,67 +74,67 @@ export default function MealGrid({ messId, month, members, meals, bazars, onUpda
     };
 
     return (
-        <div className="relative overflow-x-auto bg-white rounded-xl shadow-md border border-gray-400 h-[650px]">
+        <div className="relative overflow-x-auto bg-card rounded-xl shadow-md border border-border h-[650px]">
             <table className="min-w-full border-separate border-spacing-0 text-[11px]">
                 <thead className="sticky top-0 z-30">
-                    <tr className="bg-gray-900 text-white">
-                        <th className="border-b border-r border-gray-700 px-2 py-3 sticky left-0 z-40 bg-gray-900 min-w-[50px]">
+                    <tr className="bg-muted text-foreground">
+                        <th className="border-b border-r border-border px-2 py-3 sticky left-0 z-40 bg-muted min-w-[50px]">
                             Date
                         </th>
                         {members.map(member => (
-                            <th key={member.user_id} colSpan={3} className="border-b border-r border-gray-700 px-1 py-3 text-center truncate max-w-[100px] font-black uppercase tracking-tighter text-emerald-400">
+                            <th key={member.user_id} colSpan={3} className="border-b border-r border-border px-1 py-3 text-center truncate max-w-[100px] font-black uppercase tracking-tighter text-emerald-600 dark:text-emerald-400">
                                 {member.user_name || member.user_id.slice(0, 6)}
                             </th>
                         ))}
-                        <th className="border-b border-gray-700 px-2 py-3 bg-amber-600 sticky right-0 z-40 text-amber-50">Bazar</th>
+                        <th className="border-b border-border px-2 py-3 bg-amber-600 dark:bg-amber-700 sticky right-0 z-40 text-amber-50">Bazar</th>
                     </tr>
-                    <tr className="bg-gray-100 text-gray-900 shadow-sm font-bold">
-                        <th className="border-b border-r border-gray-300 px-1 py-1 sticky left-0 z-40 bg-gray-100 italic">DATE</th>
+                    <tr className="bg-muted/50 text-foreground shadow-sm font-bold">
+                        <th className="border-b border-r border-border px-1 py-1 sticky left-0 z-40 bg-muted/50 italic">DATE</th>
                         {members.map(member => (
                             <React.Fragment key={`${member.user_id}-bld`}>
-                                <th className="border-b border-r border-gray-300 px-0.5 py-1 w-8 text-center">B</th>
-                                <th className="border-b border-r border-gray-300 px-0.5 py-1 w-8 text-center">L</th>
-                                <th className="border-b border-r border-gray-300 px-0.5 py-1 w-8 text-center">D</th>
+                                <th className="border-b border-r border-border px-0.5 py-1 w-8 text-center">B</th>
+                                <th className="border-b border-r border-border px-0.5 py-1 w-8 text-center">L</th>
+                                <th className="border-b border-r border-border px-0.5 py-1 w-8 text-center">D</th>
                             </React.Fragment>
                         ))}
-                        <th className="border-b border-gray-300 px-1 py-1 sticky right-0 z-40 bg-gray-100">TOTAL</th>
+                        <th className="border-b border-border px-1 py-1 sticky right-0 z-40 bg-muted/50">TOTAL</th>
                     </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-300">
+                <tbody className="divide-y divide-border">
                     {days.map(day => {
                         const bazarTotal = getDailyBazarTotal(day);
                         return (
-                            <tr key={day.toISOString()} className="hover:bg-emerald-50 transition-colors group">
-                                <td className="border-b border-r border-gray-300 px-2 py-1.5 text-center font-black sticky left-0 z-20 bg-white group-hover:bg-emerald-50 transition-colors text-gray-900 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">
+                            <tr key={day.toISOString()} className="hover:bg-muted/30 transition-colors group">
+                                <td className="border-b border-r border-border px-2 py-1.5 text-center font-black sticky left-0 z-20 bg-card group-hover:bg-muted/30 transition-colors text-foreground shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">
                                     {getDate(day)}
                                 </td>
                                 {members.map(member => (
                                     <React.Fragment key={`${day.toISOString()}-${member.user_id}`}>
-                                        <td className="border-b border-r border-gray-300 p-0 text-center relative">
+                                        <td className="border-b border-r border-border p-0 text-center relative">
                                             <input
                                                 type="text"
                                                 inputMode="decimal"
-                                                className="w-full h-8 text-center focus:bg-emerald-200 focus:outline-none bg-transparent font-bold text-gray-900"
+                                                className="w-full h-8 text-center focus:bg-emerald-100 dark:focus:bg-emerald-900/30 focus:outline-none bg-transparent font-bold text-foreground"
                                                 value={getMealValue(member.user_id, day, 'breakfast')}
                                                 onChange={(e) => handleMealChange(member.user_id, day, 'breakfast', e.target.value)}
                                                 disabled={!isEditable}
                                             />
                                         </td>
-                                        <td className="border-b border-r border-gray-300 p-0 text-center relative">
+                                        <td className="border-b border-r border-border p-0 text-center relative">
                                             <input
                                                 type="text"
                                                 inputMode="decimal"
-                                                className="w-full h-8 text-center focus:bg-emerald-200 focus:outline-none bg-transparent font-bold text-gray-900"
+                                                className="w-full h-8 text-center focus:bg-emerald-100 dark:focus:bg-emerald-900/30 focus:outline-none bg-transparent font-bold text-foreground"
                                                 value={getMealValue(member.user_id, day, 'lunch')}
                                                 onChange={(e) => handleMealChange(member.user_id, day, 'lunch', e.target.value)}
                                                 disabled={!isEditable}
                                             />
                                         </td>
-                                        <td className="border-b border-r border-gray-300 p-0 text-center relative">
+                                        <td className="border-b border-r border-border p-0 text-center relative">
                                             <input
                                                 type="text"
                                                 inputMode="decimal"
-                                                className="w-full h-8 text-center focus:bg-emerald-200 focus:outline-none bg-transparent font-bold text-gray-900"
+                                                className="w-full h-8 text-center focus:bg-emerald-100 dark:focus:bg-emerald-900/30 focus:outline-none bg-transparent font-bold text-foreground"
                                                 value={getMealValue(member.user_id, day, 'dinner')}
                                                 onChange={(e) => handleMealChange(member.user_id, day, 'dinner', e.target.value)}
                                                 disabled={!isEditable}
@@ -143,7 +143,7 @@ export default function MealGrid({ messId, month, members, meals, bazars, onUpda
                                     </React.Fragment>
                                 ))}
                                 <td
-                                    className="border-b border-gray-300 px-2 py-1.5 text-center font-black text-gray-900 bg-amber-50 sticky right-0 z-20 group-hover:bg-amber-100 transition-colors cursor-pointer hover:bg-amber-200 hover:text-amber-900"
+                                    className="border-b border-border px-2 py-1.5 text-center font-black text-foreground bg-amber-50 dark:bg-amber-900/20 sticky right-0 z-20 group-hover:bg-amber-100 dark:group-hover:bg-amber-900/40 transition-colors cursor-pointer hover:bg-amber-200 dark:hover:bg-amber-900/60 hover:text-amber-900 dark:hover:text-amber-200"
                                     onClick={() => onBazarClick && onBazarClick(day)}
                                 >
                                     {bazarTotal > 0 ? bazarTotal : '-'}
