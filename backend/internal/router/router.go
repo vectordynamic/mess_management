@@ -108,11 +108,13 @@ func NewRouter(
 			}
 
 			// Feed
-			feedGroup := protected.Group("/feed")
+			feed := protected.Group("/feed")
 			{
-				feedGroup.POST("", feedHandler.CreatePost)
-				feedGroup.GET("", feedHandler.ListPosts)
-				feedGroup.GET("/:id", feedHandler.GetPost)
+				feed.POST("", feedHandler.CreatePost)
+				feed.GET("", feedHandler.ListPosts)
+				feed.GET("/:id", feedHandler.GetPost)
+				feed.PATCH("/:id", feedHandler.UpdatePost)
+				feed.DELETE("/:id", feedHandler.DeletePost)
 			}
 		}
 	}

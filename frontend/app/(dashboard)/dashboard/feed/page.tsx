@@ -2,36 +2,59 @@
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Plus, Search, MapPin, Phone, User, Home, ArrowUpRight, MessageSquare, Tag, LayoutGrid } from 'lucide-react';
+import { Plus, Search, MapPin, Phone, User, Home, ArrowUpRight, MessageSquare, Tag, LayoutGrid, Edit2, Trash2, UserCircle } from 'lucide-react';
 import { feedService, FeedPost, FeedCategory } from '@/services/feed.service';
 import CreatePostModal from '@/components/feed/CreatePostModal';
 import { formatDistanceToNow } from 'date-fns';
 import toast from 'react-hot-toast';
+import { useMe } from '@/hooks/useAuth';
 
-const CATEGORIES: { value: FeedCategory | 'all'; label: string; icon: any }[] = [
+const CATEGORIES: { value: FeedCategory | 'all' | 'my_posts'; label: string; icon: any }[] = [
     { value: 'all', label: 'Everything', icon: LayoutGrid },
     { value: 'house_rent', label: 'Rent', icon: Home },
     { value: 'buy', label: 'Buying', icon: Tag },
     { value: 'sell', label: 'Selling', icon: ArrowUpRight },
     { value: 'service', label: 'Bua/Help', icon: User },
     { value: 'help', label: 'General', icon: MessageSquare },
+    { value: 'my_posts', label: 'Your Posts', icon: UserCircle },
 ];
 
 export default function FeedPage() {
-    const [selectedCategory, setSelectedCategory] = useState<FeedCategory | 'all'>('all');
+    const [selectedCategory, setSelectedCategory] = useState<FeedCategory | 'all' | 'my_posts'>('all');
     const [searchQuery, setSearchQuery] = useState('');
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [editingPost, setEditingPost] = useState<FeedPost | null>(null);
+
+    const { data: user } = useMe();
 
     const { data: posts, isLoading, refetch } = useQuery({
-        queryKey: ['feed-posts', selectedCategory],
-        queryFn: () => feedService.listPosts({ category: selectedCategory === 'all' ? undefined : selectedCategory }),
+        queryKey: ['feed-posts', selectedCategory === 'my_posts' ? 'all' : selectedCategory],
+        queryFn: () => feedService.listPosts({
+            category: (selectedCategory === 'all' || selectedCategory === 'my_posts') ? undefined : selectedCategory
+        }),
     });
 
-    const filteredPosts = posts?.filter(post =>
-        post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        post.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        post.location.area.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredPosts = posts?.filter(post => {
+        const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            post.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            post.location.area.toLowerCase().includes(searchQuery.toLowerCase());
+
+        const matchesUser = selectedCategory === 'my_posts' ? post.user_id === user?.id : true;
+
+        return matchesSearch && matchesUser;
+    });
+
+    const handleDelete = async (postId: string) => {
+        if (!confirm('Are you sure you want to delete this post?')) return;
+
+        try {
+            await feedService.deletePost(postId);
+            toast.success('Post deleted');
+            refetch();
+        } catch (err: any) {
+            toast.error(err.message || 'Failed to delete post');
+        }
+    };
 
     return (
         <div className="space-y-6">
@@ -42,7 +65,10 @@ export default function FeedPage() {
                     <p className="text-muted-foreground font-medium">Connect and help fellow bachelors in your city</p>
                 </div>
                 <button
-                    onClick={() => setShowCreateModal(true)}
+                    onClick={() => {
+                        setEditingPost(null);
+                        setShowCreateModal(true);
+                    }}
                     className="flex items-center justify-center space-x-2 bg-emerald-600 text-white px-6 py-4 rounded-2xl font-black hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 dark:shadow-none"
                 >
                     <Plus className="w-6 h-6" />
@@ -89,7 +115,16 @@ export default function FeedPage() {
             ) : filteredPosts && filteredPosts.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {filteredPosts.map((post) => (
-                        <PostCard key={post.id} post={post} />
+                        <PostCard
+                            key={post.id}
+                            post={post}
+                            isOwner={selectedCategory === 'my_posts' && user?.id === post.user_id}
+                            onEdit={() => {
+                                setEditingPost(post);
+                                setShowCreateModal(true);
+                            }}
+                            onDelete={() => handleDelete(post.id)}
+                        />
                     ))}
                 </div>
             ) : (
@@ -102,10 +137,14 @@ export default function FeedPage() {
                 </div>
             )}
 
-            {/* Create Modal */}
+            {/* Create/Edit Modal */}
             {showCreateModal && (
                 <CreatePostModal
-                    onClose={() => setShowCreateModal(false)}
+                    initialData={editingPost || undefined}
+                    onClose={() => {
+                        setShowCreateModal(false);
+                        setEditingPost(null);
+                    }}
                     onSuccess={() => refetch()}
                 />
             )}
@@ -113,13 +152,33 @@ export default function FeedPage() {
     );
 }
 
-function PostCard({ post }: { post: FeedPost }) {
+function PostCard({ post, isOwner, onEdit, onDelete }: { post: FeedPost, isOwner: boolean, onEdit: () => void, onDelete: () => void }) {
     const timeAgo = formatDistanceToNow(new Date(post.created_at), { addSuffix: true });
 
     return (
-        <div className="bg-card border border-border rounded-3xl p-6 hover:shadow-xl hover:translate-y-[-4px] transition-all group flex flex-col h-full">
+        <div className="bg-card border border-border rounded-3xl p-6 hover:shadow-xl hover:translate-y-[-4px] transition-all group flex flex-col h-full relative">
+            {/* Owner Actions */}
+            {isOwner && (
+                <div className="absolute top-4 right-4 flex space-x-2 z-10">
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onEdit(); }}
+                        className="p-2 bg-muted hover:bg-emerald-100 dark:hover:bg-emerald-900/30 text-muted-foreground hover:text-emerald-600 rounded-xl transition-all"
+                        title="Edit Post"
+                    >
+                        <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onDelete(); }}
+                        className="p-2 bg-muted hover:bg-rose-100 dark:hover:bg-rose-900/30 text-muted-foreground hover:text-rose-600 rounded-xl transition-all"
+                        title="Delete Post"
+                    >
+                        <Trash2 className="w-4 h-4" />
+                    </button>
+                </div>
+            )}
+
             {/* Post Header */}
-            <div className="flex items-start justify-between mb-4">
+            <div className="flex items-start justify-between mb-4 pr-16">
                 <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl flex items-center justify-center text-emerald-700 dark:text-emerald-400 font-black text-lg ring-4 ring-background">
                         {(post.user_name || post.user_id)[0].toUpperCase()}
@@ -131,9 +190,10 @@ function PostCard({ post }: { post: FeedPost }) {
                         </p>
                     </div>
                 </div>
-                <div className="text-[10px] text-muted-foreground font-bold uppercase whitespace-nowrap bg-muted px-2 py-1 rounded-full">
-                    {timeAgo}
-                </div>
+            </div>
+
+            <div className="text-[10px] text-muted-foreground font-bold uppercase whitespace-nowrap bg-muted px-2 py-1 rounded-full w-fit mb-4">
+                {timeAgo}
             </div>
 
             {/* Content */}

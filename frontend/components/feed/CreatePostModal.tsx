@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 import { X, Send, MapPin, Phone, Tag, DollarSign, Loader2, Search } from 'lucide-react';
-import { feedService, FeedCategory } from '@/services/feed.service';
+import { feedService, FeedCategory, FeedPost } from '@/services/feed.service';
 import toast from 'react-hot-toast';
 
 interface CreatePostModalProps {
     onClose: () => void;
     onSuccess: () => void;
+    initialData?: FeedPost;
 }
 
 const CATEGORIES: { value: FeedCategory; label: string; icon: string }[] = [
@@ -20,25 +21,27 @@ const CATEGORIES: { value: FeedCategory; label: string; icon: string }[] = [
 
 const CITIES = ['Dhaka', 'Chittagong', 'Sylhet', 'Rajshahi', 'Khulna', 'Barisal', 'Rangpur', 'Mymensingh'];
 
-export default function CreatePostModal({ onClose, onSuccess }: CreatePostModalProps) {
+export default function CreatePostModal({ onClose, onSuccess, initialData }: CreatePostModalProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
-        category: 'house_rent' as FeedCategory,
-        title: '',
-        description: '',
-        city: 'Dhaka',
-        area: '',
-        address: '',
-        contact_info: '',
-        price: '',
+        category: initialData?.category || 'house_rent' as FeedCategory,
+        title: initialData?.title || '',
+        description: initialData?.description || '',
+        city: initialData?.location.city || 'Dhaka',
+        area: initialData?.location.area || '',
+        address: initialData?.location.address || '',
+        contact_info: initialData?.contact_info || '',
+        price: initialData?.price?.toString() || '',
     });
+
+    const isEditing = !!initialData;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
 
         try {
-            await feedService.createPost({
+            const payload = {
                 category: formData.category,
                 title: formData.title,
                 description: formData.description,
@@ -49,13 +52,19 @@ export default function CreatePostModal({ onClose, onSuccess }: CreatePostModalP
                 },
                 contact_info: formData.contact_info,
                 price: formData.price ? parseFloat(formData.price) : undefined,
-            });
+            };
 
-            toast.success('Post created successfully!');
+            if (isEditing) {
+                await feedService.updatePost(initialData.id, payload);
+                toast.success('Post updated successfully!');
+            } else {
+                await feedService.createPost(payload);
+                toast.success('Post created successfully!');
+            }
             onSuccess();
             onClose();
         } catch (err: any) {
-            toast.error(err.message || 'Failed to create post');
+            toast.error(err.message || 'Failed to save post');
         } finally {
             setIsSubmitting(false);
         }
@@ -67,8 +76,10 @@ export default function CreatePostModal({ onClose, onSuccess }: CreatePostModalP
                 {/* Header */}
                 <div className="sticky top-0 bg-card z-10 p-6 border-b border-border flex items-center justify-between">
                     <div>
-                        <h2 className="text-2xl font-black text-foreground">Create New Post</h2>
-                        <p className="text-sm text-muted-foreground mt-1">Share what you need or offer with other bachelors</p>
+                        <h2 className="text-2xl font-black text-foreground">{isEditing ? 'Edit Post' : 'Create New Post'}</h2>
+                        <p className="text-sm text-muted-foreground mt-1">
+                            {isEditing ? 'Make changes to your post' : 'Share what you need or offer with other bachelors'}
+                        </p>
                     </div>
                     <button onClick={onClose} className="p-2 hover:bg-muted rounded-full transition-colors">
                         <X className="w-6 h-6 text-muted-foreground" />
@@ -238,7 +249,7 @@ export default function CreatePostModal({ onClose, onSuccess }: CreatePostModalP
                             ) : (
                                 <>
                                     <Send className="w-5 h-5" />
-                                    <span>Publish Post</span>
+                                    <span>{isEditing ? 'Update Post' : 'Publish Post'}</span>
                                 </>
                             )}
                         </button>

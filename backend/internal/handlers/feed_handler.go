@@ -83,3 +83,52 @@ func (h *FeedHandler) GetPost(c *gin.Context) {
 
 	utils.SendSuccess(c, http.StatusOK, "post details", post)
 }
+
+func (h *FeedHandler) UpdatePost(c *gin.Context) {
+	id := c.Param("id")
+	var req struct {
+		Category    domain.FeedCategory `json:"category"`
+		Title       string              `json:"title"`
+		Description string              `json:"description"`
+		Location    domain.Location     `json:"location"`
+		ContactInfo string              `json:"contact_info"`
+		Price       float64             `json:"price"`
+		Status      string              `json:"status"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.SendError(c, http.StatusBadRequest, "invalid request", err)
+		return
+	}
+
+	userID := c.GetString("userID")
+	updates := &domain.FeedPost{
+		Category:    req.Category,
+		Title:       req.Title,
+		Description: req.Description,
+		Location:    req.Location,
+		ContactInfo: req.ContactInfo,
+		Price:       req.Price,
+		Status:      req.Status,
+	}
+
+	updatedPost, err := h.service.UpdatePost(c.Request.Context(), id, userID, updates)
+	if err != nil {
+		utils.SendError(c, http.StatusInternalServerError, err.Error(), err)
+		return
+	}
+
+	utils.SendSuccess(c, http.StatusOK, "post updated", updatedPost)
+}
+
+func (h *FeedHandler) DeletePost(c *gin.Context) {
+	id := c.Param("id")
+	userID := c.GetString("userID")
+
+	if err := h.service.DeletePost(c.Request.Context(), id, userID); err != nil {
+		utils.SendError(c, http.StatusInternalServerError, err.Error(), err)
+		return
+	}
+
+	utils.SendSuccess(c, http.StatusOK, "post deleted", nil)
+}

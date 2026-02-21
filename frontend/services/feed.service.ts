@@ -46,12 +46,22 @@ export const feedService = {
         if (filters?.city) params.append('city', filters.city);
         if (filters?.area) params.append('area', filters.area);
 
-        const { data } = await apiClient.get(`/feed?${params.toString()}`);
+        const queryString = params.toString() ? `?${params.toString()}` : '';
+        const { data } = await apiClient.get(`/feed${queryString}`);
         return data.data;
     },
 
     async getPost(id: string): Promise<FeedPost> {
         const { data } = await apiClient.get(`/feed/${id}`);
         return data.data;
+    },
+
+    async updatePost(id: string, post: Partial<CreatePostRequest>): Promise<FeedPost> {
+        const { data } = await apiClient.patch(`/feed/${id}`, post);
+        return data.data;
+    },
+
+    async deletePost(id: string): Promise<void> {
+        await apiClient.delete(`/feed/${id}`);
     },
 };
