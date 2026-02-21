@@ -3,9 +3,30 @@
 import { useMe } from '@/hooks/useAuth';
 import { Plus, Users, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { useMessContext } from '@/contexts/MessContext';
+import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 export default function MessPage() {
     const { data: user } = useMe();
+
+    const { isMemberOfAnyMess } = useMessContext();
+    const router = useRouter();
+
+    const handleAction = (href: string) => {
+        if (isMemberOfAnyMess) {
+            toast.error("You are already a member of a mess. You must leave your current mess to join or create a new one.", {
+                style: {
+                    borderRadius: '16px',
+                    background: '#fff1f2',
+                    color: '#991b1b',
+                    border: '1px solid #fee2e2',
+                },
+            });
+            return;
+        }
+        router.push(href);
+    };
 
     return (
         <div className="space-y-6">
@@ -18,9 +39,9 @@ export default function MessPage() {
 
             {/* Quick Actions */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Link
-                    href="/dashboard/mess/create"
-                    className="bg-card rounded-xl p-6 shadow-sm hover:shadow-md transition-all border-2 border-dashed border-border hover:border-primary group"
+                <button
+                    onClick={() => handleAction('/dashboard/mess/create')}
+                    className="bg-card rounded-xl p-6 shadow-sm hover:shadow-md transition-all border-2 border-dashed border-border hover:border-primary group text-left"
                 >
                     <div className="flex items-center space-x-4">
                         <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
@@ -31,11 +52,11 @@ export default function MessPage() {
                             <p className="text-sm text-muted-foreground">Start your own mess</p>
                         </div>
                     </div>
-                </Link>
+                </button>
 
-                <Link
-                    href="/dashboard/mess/join"
-                    className="bg-card rounded-xl p-6 shadow-sm hover:shadow-md transition-all border-2 border-dashed border-border hover:border-blue-500 group"
+                <button
+                    onClick={() => handleAction('/dashboard/mess/join')}
+                    className="bg-card rounded-xl p-6 shadow-sm hover:shadow-md transition-all border-2 border-dashed border-border hover:border-blue-500 group text-left"
                 >
                     <div className="flex items-center space-x-4">
                         <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
@@ -46,7 +67,7 @@ export default function MessPage() {
                             <p className="text-sm text-muted-foreground">Enter mess ID to join</p>
                         </div>
                     </div>
-                </Link>
+                </button>
             </div>
 
             {/* User's Messes */}

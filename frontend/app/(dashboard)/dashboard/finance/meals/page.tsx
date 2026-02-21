@@ -111,37 +111,6 @@ export default function MealsPage() {
     });
 
     const handleSave = () => {
-        if (!isManager) {
-            toast.error(
-                (t) => (
-                    <div className="flex flex-col gap-2">
-                        <span className="font-extrabold text-rose-900">Manager Access Required</span>
-                        <div className="text-xs text-rose-800 opacity-90 leading-relaxed">
-                            Only managers can save batch meal updates. Check your mess details to see available managers.
-                        </div>
-                        <Link
-                            href={`/dashboard/mess/${currentMessId}`}
-                            onClick={() => toast.dismiss(t.id)}
-                            className="bg-white text-rose-600 px-3 py-2 rounded-xl text-[10px] font-black tracking-tight text-center border border-rose-200 hover:bg-rose-50 transition-all uppercase shadow-sm"
-                        >
-                            View Members & Managers
-                        </Link>
-                    </div>
-                ),
-                {
-                    duration: 6000,
-                    position: 'top-center',
-                    style: {
-                        border: '1px solid #fee2e2',
-                        background: '#fff1f2',
-                        padding: '16px',
-                        borderRadius: '24px',
-                        boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)'
-                    }
-                }
-            );
-            return;
-        }
         updateMutation.mutate(localMeals);
     };
 
@@ -220,7 +189,7 @@ export default function MealsPage() {
                 <ul className="text-sm text-amber-800 dark:text-amber-400/80 space-y-1 opacity-80">
                     <li>• Enter meal counts (1, 0.5, 0) for Lunch (L) and Dinner (D).</li>
                     <li>• Click on the <strong>Bazar</strong> cell to add/edit daily shopping costs.</li>
-                    <li>• Only Managers can save batch meal updates permanently.</li>
+                    <li>• Any active member can update and save the meal sheet.</li>
                     <li>• Totals are automatically calculated at the bottom.</li>
                 </ul>
             </div>

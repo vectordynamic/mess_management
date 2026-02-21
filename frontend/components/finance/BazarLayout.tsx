@@ -135,7 +135,13 @@ export default function BazarLayout({
                                                             </span>
                                                         </div>
                                                         <p className="text-xs text-muted-foreground mt-0.5">
-                                                            By: <span className="font-semibold text-foreground/80">{buyer?.user_name || 'Unknown'}</span>
+                                                            Saved by: <span className="font-semibold text-foreground/80">
+                                                                {(() => {
+                                                                    const recorderId = bazar.created_by || bazar.buyer_id;
+                                                                    const recorder = members.find(m => m.user_id === recorderId);
+                                                                    return recorder ? (recorder.name || recorder.user_name || recorder.user_id) : (recorderId || 'Unknown');
+                                                                })()}
+                                                            </span>
                                                         </p>
                                                         {bazar.items && (
                                                             <p className="text-xs text-muted-foreground mt-1 italic">"{bazar.items}"</p>

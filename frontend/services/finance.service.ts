@@ -79,6 +79,11 @@ export const financeService = {
         return data.data;
     },
 
+    async getMessPayments(messId: string, month: string): Promise<Payment[]> {
+        const { data } = await apiClient.get(`/payments/${messId}/all-history`, { params: { month } });
+        return data.data;
+    },
+
     // Summary
     async getMonthlySummary(messId: string, month: string): Promise<MonthlySummary> {
         const { data } = await apiClient.get(`/summary/${messId}/final`, { params: { month } });

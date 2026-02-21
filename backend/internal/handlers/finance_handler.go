@@ -115,8 +115,8 @@ func (h *FinanceHandler) CreateBazar(c *gin.Context) {
 	}
 
 	userID := c.GetString("userID")
-	req.BuyerID = userID // Ensure BuyerID is the one who created it if not provided
-	if err := h.service.CreateBazar(c.Request.Context(), req); err != nil {
+	req.BuyerID = userID // Always set BuyerID to recorder as per user request (it's not about credit)
+	if err := h.service.CreateBazar(c.Request.Context(), req, userID); err != nil {
 		utils.SendError(c, http.StatusInternalServerError, "failed to create bazar entry", err)
 		return
 	}
@@ -193,8 +193,25 @@ func (h *FinanceHandler) DeleteBazar(c *gin.Context) {
 	utils.SendSuccess(c, http.StatusOK, "bazar deleted", nil)
 }
 
+func (h *FinanceHandler) GetMessPayments(c *gin.Context) {
+	messID := c.Param("id")
+	month := c.Query("month")
+	if month == "" {
+		utils.SendError(c, http.StatusBadRequest, "month required", nil)
+		return
+	}
+
+	payments, err := h.service.GetMessPayments(c.Request.Context(), messID, month)
+	if err != nil {
+		utils.SendError(c, http.StatusInternalServerError, "failed to fetch payments", err)
+		return
+	}
+	utils.SendSuccess(c, http.StatusOK, "mess payments", payments)
+}
+
 func (h *FinanceHandler) SubmitPayment(c *gin.Context) {
 	var req domain.Payment
+	// Debug: Log the raw body? No, Bind consumes it. Let's just log the result.
 	if err := c.ShouldBindJSON(&req); err != nil {
 		utils.SendError(c, http.StatusBadRequest, "invalid request", err)
 		return

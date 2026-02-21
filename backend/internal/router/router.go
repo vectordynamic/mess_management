@@ -85,6 +85,7 @@ func NewRouter(
 				payGroup.POST("/:id/submit", financeHandler.SubmitPayment)
 				payGroup.GET("/:id/pending", financeHandler.GetPendingPayments)
 				payGroup.GET("/:id/my-history", financeHandler.GetMemberPayments)
+				payGroup.GET("/:id/all-history", financeHandler.GetMessPayments)
 				payGroup.PATCH("/:id/verify/:payId", financeHandler.VerifyPayment)
 			}
 

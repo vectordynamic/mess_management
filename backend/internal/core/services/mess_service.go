@@ -40,6 +40,12 @@ func (s *MessService) GetByID(ctx context.Context, id string) (*domain.Mess, err
 }
 
 func (s *MessService) CreateMess(ctx context.Context, name, adminID string) (*domain.Mess, error) {
+	// Check if user is already in a mess
+	existingUser, _ := s.userRepo.GetByID(ctx, adminID)
+	if existingUser != nil && len(existingUser.Messes) > 0 {
+		return nil, errors.New("you are already a member of a mess. leave it first")
+	}
+
 	// Generate Mess ID
 	id := utils.GenerateID(name, 4)
 
@@ -82,6 +88,12 @@ func (s *MessService) CreateMess(ctx context.Context, name, adminID string) (*do
 }
 
 func (s *MessService) RequestJoin(ctx context.Context, messID, userID string) error {
+	// Check if user is already in a mess
+	existingUser, _ := s.userRepo.GetByID(ctx, userID)
+	if existingUser != nil && len(existingUser.Messes) > 0 {
+		return errors.New("cannot join a new mess while being a member of another")
+	}
+
 	mess, err := s.repo.GetByID(ctx, messID)
 	if err != nil || mess == nil {
 		fmt.Printf("[DEBUG] RequestJoin: mess not found: %s\n", messID)

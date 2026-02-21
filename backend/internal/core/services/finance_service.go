@@ -67,7 +67,9 @@ func (s *FinanceService) SubmitPayment(ctx context.Context, payment domain.Payme
 		payment.ID = utils.GenerateID("PAY", 4)
 	}
 
-	// Ensure UserID is set (if manager didn't provide it, default to submitter? Or error? Frontend provides it.)
+	// If UserID is not provided (e.g. member self-submitting, which is not allowed by isManager check here,
+	// but for completeness), default to submitterID.
+	// Managers MUST provide the UserID of the member who paid.
 	if payment.UserID == "" {
 		payment.UserID = submitterID
 	}
@@ -107,6 +109,10 @@ func (s *FinanceService) GetPendingPayments(ctx context.Context, messID, month s
 	return pending, nil
 }
 
+func (s *FinanceService) GetMessPayments(ctx context.Context, messID, month string) ([]domain.Payment, error) {
+	return s.repo.GetPayments(ctx, messID, month)
+}
+
 func (s *FinanceService) GetMemberPayments(ctx context.Context, messID, userID string) ([]domain.Payment, error) {
 	return s.repo.GetMemberPayments(ctx, messID, userID)
 }
@@ -125,9 +131,9 @@ func (s *FinanceService) BatchUpdateMeals(ctx context.Context, meals []domain.Da
 		return nil
 	}
 
-	// Check if user is manager for the mess
-	if !s.isManager(ctx, meals[0].MessID, userID) {
-		return errors.New("only manager can update meals")
+	// Check if user is a member of the mess
+	if !s.isMember(ctx, meals[0].MessID, userID) {
+		return errors.New("only members can update meals")
 	}
 
 	for _, meal := range meals {
@@ -138,10 +144,10 @@ func (s *FinanceService) BatchUpdateMeals(ctx context.Context, meals []domain.Da
 	return nil
 }
 
-func (s *FinanceService) CreateBazar(ctx context.Context, bazar domain.Bazar) error {
-	// Check if user is manager or admin
-	if !s.isManager(ctx, bazar.MessID, bazar.BuyerID) {
-		return errors.New("only manager or admin can add bazar entries")
+func (s *FinanceService) CreateBazar(ctx context.Context, bazar domain.Bazar, submitterID string) error {
+	// Check if user is a member of the mess
+	if !s.isMember(ctx, bazar.MessID, submitterID) {
+		return errors.New("only members can add bazar entries")
 	}
 
 	if bazar.ID == "" {
@@ -151,6 +157,7 @@ func (s *FinanceService) CreateBazar(ctx context.Context, bazar domain.Bazar) er
 	if bazar.Date.IsZero() {
 		bazar.Date = time.Now()
 	}
+	bazar.CreatedBy = submitterID
 
 	// TODO: Check Month Lock
 	return s.repo.CreateBazar(ctx, &bazar)
@@ -208,7 +215,9 @@ func (s *FinanceService) UpdateBazar(ctx context.Context, bazar domain.Bazar, us
 	// If simplistic update, just update amount/items
 	existing.Amount = bazar.Amount
 	existing.Items = bazar.Items
-	existing.BuyerID = bazar.BuyerID // Allow updating buyer
+	// We don't change BuyerID or CreatedBy here to preserve original audit trail
+	// unless the user specifically wants to track "last updated by".
+	// For now, keeping it simple as requested.
 	// existing.Date = bazar.Date // Date update is tricky if not passed correctly
 
 	return s.repo.UpdateBazar(ctx, existing)
@@ -471,10 +480,23 @@ func (s *FinanceService) isManager(ctx context.Context, messID, userID string) b
 	for _, m := range mess.Members {
 		if m.UserID == userID {
 			for _, r := range m.Roles {
-				if r == domain.RoleManager {
+				if r == domain.RoleManager || r == domain.RoleAdmin {
 					return true
 				}
 			}
+		}
+	}
+	return false
+}
+
+func (s *FinanceService) isMember(ctx context.Context, messID, userID string) bool {
+	mess, err := s.messRepo.GetByID(ctx, messID)
+	if err != nil || mess == nil {
+		return false
+	}
+	for _, m := range mess.Members {
+		if m.UserID == userID && m.Status == "active" {
+			return true
 		}
 	}
 	return false

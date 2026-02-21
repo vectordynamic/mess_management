@@ -44,14 +44,15 @@ type Payment struct {
 
 // --- Bazar (Shopping) ---
 type Bazar struct {
-	ID      string    `bson:"_id" json:"id"`
-	MessID  string    `bson:"mess_id" json:"mess_id"`
-	BuyerID string    `bson:"buyer_id" json:"buyer_id"`
-	Amount  float64   `bson:"amount" json:"amount"`
-	Items   string    `bson:"items" json:"items"`
-	Date    time.Time `bson:"date" json:"date"`
-	Status  string    `bson:"status" json:"status"` // pending, approved
-	Month   string    `bson:"month" json:"month"`
+	ID        string    `bson:"_id" json:"id"`
+	MessID    string    `bson:"mess_id" json:"mess_id"`
+	BuyerID   string    `bson:"buyer_id" json:"buyer_id"`
+	Amount    float64   `bson:"amount" json:"amount"`
+	Items     string    `bson:"items" json:"items"`
+	Date      time.Time `bson:"date" json:"date"`
+	Status    string    `bson:"status" json:"status"` // pending, approved
+	Month     string    `bson:"month" json:"month"`
+	CreatedBy string    `bson:"created_by" json:"created_by"`
 }
 
 // --- Daily Meals ---

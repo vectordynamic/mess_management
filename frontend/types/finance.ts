@@ -34,6 +34,7 @@ export interface Bazar {
     date: string;
     status: 'pending' | 'approved';
     month: string;
+    created_by?: string;
 }
 
 export interface DailyMeal {

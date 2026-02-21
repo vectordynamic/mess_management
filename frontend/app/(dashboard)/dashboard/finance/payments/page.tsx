@@ -15,6 +15,7 @@ import { formatCurrency } from '@/lib/formatters';
 
 export default function PaymentsPage() {
     const [showAddForm, setShowAddForm] = useState(false);
+    const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
     const { currentMessId, isManager, isMemberOfAnyMess } = useMessContext();
     const { register, handleSubmit, reset, formState: { errors } } = useForm<Payment>();
     const queryClient = useQueryClient();
@@ -31,7 +32,8 @@ export default function PaymentsPage() {
         mutationFn: (payment: Payment) => financeService.submitPayment(payment),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['pending-payments'] });
-            toast.success('Payment submitted for verification!');
+            queryClient.invalidateQueries({ queryKey: ['mess-payments'] });
+            toast.success('Payment recorded successfully!');
             setShowAddForm(false);
             reset();
         },
@@ -46,6 +48,7 @@ export default function PaymentsPage() {
             financeService.verifyPayment(messId, paymentId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['pending-payments'] });
+            queryClient.invalidateQueries({ queryKey: ['mess-payments'] });
             toast.success('Payment verified!');
         },
         onError: (error: any) => {
@@ -60,10 +63,10 @@ export default function PaymentsPage() {
         enabled: !!currentMessId,
     });
 
-    // Fetch my payments (for all users)
-    const { data: myPayments = [] } = useQuery({
-        queryKey: ['my-payments', currentMessId],
-        queryFn: () => currentMessId ? financeService.getMemberPayments(currentMessId) : Promise.resolve([]),
+    // Fetch mess payments (for all users - current selected month)
+    const { data: messPayments = [], isLoading: isLoadingHistory } = useQuery({
+        queryKey: ['mess-payments', currentMessId, selectedMonth],
+        queryFn: () => currentMessId ? financeService.getMessPayments(currentMessId, selectedMonth) : Promise.resolve([]),
         enabled: !!currentMessId,
     });
 
@@ -240,10 +243,19 @@ export default function PaymentsPage() {
 
             {/* Payment History */}
             <div className="bg-card rounded-xl shadow-sm overflow-hidden border border-border">
-                <div className="p-6 border-b border-border">
-                    <h3 className="text-lg font-semibold text-foreground">Payment History</h3>
+                <div className="p-6 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <h3 className="text-lg font-semibold text-foreground">Mess Payment History</h3>
+                    <div className="flex items-center space-x-2">
+                        <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">Filter Month:</label>
+                        <input
+                            type="month"
+                            value={selectedMonth}
+                            onChange={(e) => setSelectedMonth(e.target.value)}
+                            className="px-3 py-1.5 bg-background border border-border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none text-foreground"
+                        />
+                    </div>
                 </div>
-                {myPayments.length > 0 ? (
+                {messPayments.length > 0 ? (
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm text-left">
                             <thead className="bg-muted/50 text-muted-foreground font-medium">
@@ -256,13 +268,13 @@ export default function PaymentsPage() {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
-                                {myPayments.map((payment: Payment) => {
+                                {messPayments.map((payment: Payment) => {
                                     const payer = activeMembers.find((m: MessMember) => m.user_id === payment.user_id);
                                     return (
                                         <tr key={payment.id} className="hover:bg-muted/30">
                                             <td className="px-6 py-4 font-medium text-foreground">{payment.created_at ? new Date(payment.created_at).toLocaleDateString() : '-'}</td>
                                             <td className="px-6 py-4 text-foreground font-medium">
-                                                {payer ? payer.name || payer.user_name || payer.user_id : 'Unknown'}
+                                                {payer ? payer.name || payer.user_name || payer.user_id : payment.user_id || 'Unknown'}
                                             </td>
                                             <td className="px-6 py-4 font-bold text-foreground">{formatCurrency(payment.amount)}</td>
                                             <td className="px-6 py-4 text-foreground capitalized font-medium">{payment.type}</td>
@@ -285,8 +297,10 @@ export default function PaymentsPage() {
                         <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                             <CreditCard className="w-8 h-8 text-blue-600 dark:text-blue-400" />
                         </div>
-                        <p className="text-muted-foreground">No payments found</p>
-                        <p className="text-sm text-muted-foreground/70 mt-1">Payments recorded for you will appear here</p>
+                        <p className="text-muted-foreground">{isLoadingHistory ? 'Loading history...' : 'No payments found for this month'}</p>
+                        <p className="text-sm text-muted-foreground/70 mt-1">
+                            {isLoadingHistory ? 'Fetching records...' : 'Payments recorded for the mess will appear here'}
+                        </p>
                     </div>
                 )}
             </div>
