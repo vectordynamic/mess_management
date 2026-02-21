@@ -25,19 +25,22 @@ func main() {
 	userRepo := mongo.NewUserRepository(database.Database)
 	messRepo := mongo.NewMessRepository(database.Database)
 	financeRepo := mongo.NewFinanceRepository(database.Database)
+	feedRepo := mongo.NewFeedRepository(database.Database)
 
 	// --- Services ---
 	userService := services.NewUserService(userRepo, cfg)
 	messService := services.NewMessService(messRepo, userRepo)
 	financeService := services.NewFinanceService(financeRepo, messRepo, userRepo)
+	feedService := services.NewFeedService(feedRepo, messRepo, userRepo)
 
 	// --- Handlers ---
 	authHandler := handlers.NewAuthHandler(userService)
 	messHandler := handlers.NewMessHandler(messService)
 	financeHandler := handlers.NewFinanceHandler(financeService)
+	feedHandler := handlers.NewFeedHandler(feedService)
 
 	// --- Router ---
-	r := router.NewRouter(cfg, authHandler, messHandler, financeHandler)
+	r := router.NewRouter(cfg, authHandler, messHandler, financeHandler, feedHandler)
 
 	log.Printf("Server starting on port %s", cfg.Port)
 	if err := r.Run(":" + cfg.Port); err != nil {

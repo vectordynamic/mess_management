@@ -9,6 +9,7 @@ const navItems = [
     { href: '/dashboard/finance/meals', icon: Utensils, label: 'Meals' },
     { href: '/dashboard/finance/costs', icon: DollarSign, label: 'Service Costs' },
     { href: '/dashboard/finance', icon: CreditCard, label: 'Finance' },
+    { href: '/dashboard/feed', icon: FileText, label: 'Feed' },
     { href: '/dashboard/reports', icon: FileText, label: 'Reports' },
 ];
 

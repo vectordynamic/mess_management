@@ -12,6 +12,7 @@ const navItems = [
     { href: '/dashboard/mess', icon: Users, label: 'Mess Management' },
     { href: '/dashboard/finance/meals', icon: Utensils, label: 'Meal Sheet' },
     { href: '/dashboard/finance/costs', icon: DollarSign, label: 'Service Costs' },
+    { href: '/dashboard/feed', icon: FileText, label: 'Bachelor Feed' }, // Using FileText as a placeholder or Rss if imported
     { href: '/dashboard/finance', icon: CreditCard, label: 'Finance' },
     { href: '/dashboard/reports', icon: FileText, label: 'Reports' },
     { href: '/dashboard/profile', icon: Settings, label: 'Profile' },

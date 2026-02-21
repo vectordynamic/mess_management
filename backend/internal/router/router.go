@@ -12,6 +12,7 @@ func NewRouter(
 	authHandler *handlers.AuthHandler,
 	messHandler *handlers.MessHandler,
 	financeHandler *handlers.FinanceHandler,
+	feedHandler *handlers.FeedHandler,
 ) *gin.Engine {
 	r := gin.Default()
 
@@ -104,6 +105,14 @@ func NewRouter(
 				histGroup.POST("/:id/unlock-request", financeHandler.RequestUnlock)
 				histGroup.GET("/:id/pending-requests", financeHandler.GetLockStatus)
 				histGroup.PATCH("/:id/lock-status", financeHandler.SetLockStatus)
+			}
+
+			// Feed
+			feedGroup := protected.Group("/feed")
+			{
+				feedGroup.POST("", feedHandler.CreatePost)
+				feedGroup.GET("", feedHandler.ListPosts)
+				feedGroup.GET("/:id", feedHandler.GetPost)
 			}
 		}
 	}
