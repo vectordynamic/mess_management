@@ -1,76 +1,119 @@
-# Amar Dera - Backend
+# Amar Dera - Mess Management System 🏠
 
-**Amar Dera** is a Mess Management System built with Go (Gin) and MongoDB.
+**Amar Dera** (Our Home) is a comprehensive Mess (Bachelor Hostel) Management System designed to simplify the daily chaos of shared living. It automates meal tracking, bazar expenses, house costs, and provides a social marketplace for bachelors.
 
-## API Documentation
+---
 
-### 1. Authentication (`/api/v1/auth`)
+## ✨ Key Features
 
-| Method | Endpoint  | Description                       | Auth |
-| :----- | :-------- | :-------------------------------- | :--- |
-| `POST` | `/signup` | Create a new user account.        | No   |
-| `POST` | `/login`  | Login and get JWT token.          | No   |
-| `GET`  | `/users/me` | Get current user's profile.    | Yes  |
+### 🏢 Mess Management
+- **Create or Join**: Start a new mess as an Admin or request to join an existing one using a unique Mess ID.
+- **Member Approval**: Admins and Managers can approve/reject new join requests.
+- **RBAC (Role Based Access Control)**:
+  - **Admin**: Full control, can assign/remove Managers.
+  - **Manager**: Manages daily operations (meals, bazar, payments).
+  - **Member**: Submits bazar entries, payments, and views reports.
 
-### 2. Mess Management (`/api/v1/mess`) (Protected)
+### 💰 Finance & Accounting
+- **Meal Tracking**: A monthly grid to track daily meals (Breakfast, Lunch, Dinner).
+- **Bazar Management**: easy entry for daily market expenses with Manager verification.
+- **Fixed Costs**: Management for shared bills like House Rent, WiFi, Water, and Gas.
+- **Automated Calculations**: Real-time calculation of Meal Rates, Total Expenses, and Individual Balances.
+- **Payment Verification**: Track cash payments with a submission and verification workflow.
 
-| Method | Endpoint                   | Description                                      |
-| :----- | :------------------------- | :----------------------------------------------- |
-| `POST` | `/create`                  | Create a new mess (You become Admin).            |
-| `POST` | `/join`                    | Request to join a mess using ID.                 |
-| `GET`  | `/:id/requests`            | List pending join requests (Admin/Manager).      |
-| `PATCH`| `/:id/requests/approve`    | Approve a member (Admin/Manager).                |
-| `PATCH`| `/:id/roles`               | Assign roles (Admin only).                       |
+### 🍱 Bachelor Feed
+- **Marketplace**: Buy/Sell used furniture, gadgets, or appliances.
+- **Flatmates Wanted**: Post "Seat Available" or "House Rent" advertisements.
+- **Bua/Service**: Find or recommend domestic helps and services.
+- **Filters**: Filter by category (Rent, Buy, Sell, Help) or view only "Your Posts".
 
-### 3. Service Costs (`/api/v1/house`) (Protected)
+### 🔒 History & Security
+- **Month Locking**: Financial data is locked at the end of the month to prevent tampering.
+- **Unlock Requests**: Managers can request Admins to unlock past months for corrections.
 
-| Method | Endpoint                   | Description                                      |
-| :----- | :------------------------- | :----------------------------------------------- |
-| `GET`  | `/:id/costs`               | Get all fixed costs for a month. `?month=YYYY-MM`|
-| `POST` | `/:id/costs`               | Add a new fixed cost (e.g., WiFi, Gas).          |
-| `DELETE`| `/:id/costs/:costId`      | Delete a cost.                                   |
+---
 
-### 4. Meals (`/api/v1/meals`) (Protected)
+## 🛠 Tech Stack
 
-| Method | Endpoint                   | Description                                      |
-| :----- | :------------------------- | :----------------------------------------------- |
-| `GET`  | `/:id/daily`               | Get daily meal grid. `?month=YYYY-MM`            |
-| `POST` | `/:id/update`              | Batch update daily meals (Manager).              |
+### Frontend
+- **Framework**: Next.js 14 (App Router)
+- **Styling**: Tailwind CSS
+- **State Management**: React Context & TanStack Query (React Query)
+- **Icons**: Lucide React
+- **Notifications**: React Hot Toast
 
-### 5. Bazar (`/api/v1/bazar`) (Protected)
+### Backend
+- **Language**: Go (Golang)
+- **Framework**: Gin Gonic
+- **Database**: MongoDB (Official Go Driver)
+- **Auth**: JWT (JSON Web Tokens) with Argon2 hashing
 
-| Method | Endpoint                   | Description                                      |
-| :----- | :------------------------- | :----------------------------------------------- |
-| `POST` | `/:id/entry`               | Member submits bazar cost.                       |
-| `GET`  | `/:id/pending`             | List pending bazar entries. `?month=YYYY-MM`     |
-| `PATCH`| `/:id/approve/:bazarId`    | Approve a bazar entry (Manager).                 |
+---
 
-### 6. Payments (`/api/v1/payments`) (Protected)
+## 🚀 Getting Started
 
-| Method | Endpoint                   | Description                                      |
-| :----- | :------------------------- | :----------------------------------------------- |
-| `POST` | `/:id/submit`              | Member submits cash payment (House/Meal).        |
-| `GET`  | `/:id/pending`             | List pending payments. `?month=YYYY-MM`          |
-| `PATCH`| `/:id/verify/:payId`       | Verify cash received (Manager).                  |
+### Prerequisites
+- [Go](https://go.dev/dl/) (1.21 or higher)
+- [Node.js](https://nodejs.org/) (18.x or higher)
+- [MongoDB](https://www.mongodb.com/try/download/community) (Running locally or on Atlas)
 
-### 7. Reports & Summary (`/api/v1/summary`) (Protected)
+### 1. Backend Setup
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Create a `.env` file (copy from `.env.example` if available):
+   ```env
+   PORT=8080
+   MONGO_URI=mongodb://localhost:27017
+   DB_NAME=amar_dera
+   JWT_SECRET=your_secret_key_here
+   ```
+3. Run the development server:
+   ```bash
+   make run
+   # Or manually: go run cmd/server/main.go
+   ```
 
-| Method | Endpoint                   | Description                                      |
-| :----- | :------------------------- | :----------------------------------------------- |
-| `GET`  | `/:id/fixed`               | Get Fixed Cost summary.                          |
-| `GET`  | `/:id/meals`               | Get Meal Rate calc summary.                      |
-| `GET`  | `/:id/final`               | Get Final Balance sheet.                         |
+### 2. Frontend Setup
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create a `.env.local` file:
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1
+   ```
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-### 8. History Control (`/api/v1/history`) (Protected)
+---
 
-| Method | Endpoint                   | Description                                      |
-| :----- | :------------------------- | :----------------------------------------------- |
-| `POST` | `/:id/unlock-request`      | Manager requests to unlock a past month.         |
-| `GET`  | `/:id/pending-requests`    | Admin views unlock requests.                     |
-| `PATCH`| `/:id/lock-status`         | Admin unlocks a month for a duration.            |
+## 📁 Project Structure
 
-## Setup & Testing
+```bash
+amar-dera/
+├── backend/            # Go Backend (Clean Architecture)
+│   ├── cmd/            # Entry points
+│   ├── internal/       # Core logic (Domain, Services, Handlers, Repos)
+│   └── pkg/            # Common utilities
+├── frontend/           # Next.js Frontend
+│   ├── app/            # Routes & Pages
+│   ├── components/     # UI Components
+│   └── services/       # API integration
+└── postman.json        # API Collection for testing
+```
 
-1.  **Configuration**: Check `.env` (or defaults in code).
-2.  **Run**: `cd backend && go run cmd/server/main.go`
-3.  **Test**: Import `postman.json` (in this folder) into Postman.
+---
+
+## 📱 Mobile Support
+The system is fully responsive, optimized for use on mobile phones so members can update meals and bazar entries on the go.
+
+## 📄 License
+This project is developed for personal mess management. All rights reserved.
