@@ -36,15 +36,15 @@ export default function FinanceOverviewPage() {
         enabled: !!currentMessId,
     });
 
-    if (!isMemberOfAnyMess) {
-        return <NoMessView />;
-    }
-
     const memberList = useMemo(() => {
         return summary?.member_summaries ? Object.values(summary.member_summaries) : [];
     }, [summary]);
 
     const activeMemberCount = memberList.length || 1;
+
+    if (!isMemberOfAnyMess) {
+        return <NoMessView />;
+    }
 
     if (!currentMessId) {
         return (

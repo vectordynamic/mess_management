@@ -205,10 +205,10 @@ export default function MessDetailsPage() {
                             >
                                 <div className="flex items-center space-x-3">
                                     <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center text-emerald-700 dark:text-emerald-400 font-bold ring-4 ring-background">
-                                        {(member.user_name || member.user_id)[0].toUpperCase()}
+                                        {(member.name || member.user_name || member.user_id)[0].toUpperCase()}
                                     </div>
                                     <div>
-                                        <p className="font-bold text-foreground">{member.user_name || member.user_id}</p>
+                                        <p className="font-bold text-foreground">{member.name || member.user_name || member.user_id}</p>
                                         <p className="text-[10px] text-muted-foreground font-mono tracking-tighter uppercase">{member.user_id}</p>
                                         <div className="flex flex-wrap gap-1 mt-1">
                                             {member.roles.map((role) => {
@@ -301,7 +301,7 @@ export default function MessDetailsPage() {
                             </div>
                             <h3 className="text-2xl font-black text-foreground">Manage Member</h3>
                             <p className="text-muted-foreground text-sm mt-2">
-                                Settings for <span className="font-black text-emerald-600 dark:text-emerald-400">{selectedMember.user_name || selectedMember.user_id}</span>
+                                Settings for <span className="font-black text-emerald-600 dark:text-emerald-400">{selectedMember.name || selectedMember.user_name || selectedMember.user_id}</span>
                             </p>
                         </div>
 
@@ -435,10 +435,10 @@ export default function MessDetailsPage() {
                                     >
                                         <div className="flex items-center space-x-3">
                                             <div className="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center text-amber-700 dark:text-amber-400 font-bold">
-                                                {(request.user_name || request.user_id)[0].toUpperCase()}
+                                                {(request.name || request.user_name || request.user_id)[0].toUpperCase()}
                                             </div>
                                             <div>
-                                                <p className="font-semibold text-foreground">{request.user_name || request.user_id}</p>
+                                                <p className="font-semibold text-foreground">{request.name || request.user_name || request.user_id}</p>
                                                 <p className="text-xs text-muted-foreground">ID: {request.user_id}</p>
                                             </div>
                                         </div>

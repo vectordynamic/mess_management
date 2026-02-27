@@ -269,6 +269,11 @@ func (s *MessService) GetRequests(ctx context.Context, messID, userID string) ([
 	requests := []domain.Member{}
 	for _, m := range mess.Members {
 		if m.Status == "pending" {
+			// Populate Name
+			user, err := s.userRepo.GetByID(ctx, m.UserID)
+			if err == nil && user != nil {
+				m.Name = user.Name
+			}
 			requests = append(requests, m)
 		}
 	}

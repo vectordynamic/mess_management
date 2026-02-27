@@ -104,15 +104,15 @@ export default function CostsPage() {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500 pb-10">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-foreground tracking-tight">Monthly Service Costs</h1>
-                    <p className="text-muted-foreground font-medium">Add and manage shared costs like Rent, Electricity, and Utilities</p>
+                    <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">Monthly Service Costs</h1>
+                    <p className="text-muted-foreground font-medium text-sm sm:text-base">Add and manage shared costs like Rent, Electricity, and Utilities</p>
                 </div>
                 {isManager && (
                     <button
                         onClick={() => setShowAddModal(true)}
-                        className="flex items-center space-x-2 bg-emerald-600 text-white px-5 py-2.5 rounded-xl hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-100 dark:shadow-none"
+                        className="flex items-center justify-center space-x-2 bg-emerald-600 text-white px-5 py-2.5 rounded-xl hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-100 dark:shadow-none w-full sm:w-auto"
                     >
                         <Plus className="w-5 h-5" />
                         <span className="font-bold">Add New Cost</span>
@@ -120,15 +120,15 @@ export default function CostsPage() {
                 )}
             </div>
 
-            <div className="bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800 rounded-2xl p-5 flex items-start space-x-4">
-                <div className="bg-blue-500 text-white p-2 rounded-xl mt-0.5 shadow-sm shadow-blue-100 dark:shadow-none">
+            <div className="bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800 rounded-2xl p-4 sm:p-5 flex items-start space-x-4">
+                <div className="bg-blue-500 text-white p-2 rounded-xl mt-0.5 shadow-sm shadow-blue-100 dark:shadow-none flex-shrink-0">
                     <Info className="w-4 h-4" />
                 </div>
                 <div>
-                    <p className="text-sm font-black text-blue-900 dark:text-blue-300 uppercase tracking-wide flex items-center">
+                    <p className="text-xs sm:text-sm font-black text-blue-900 dark:text-blue-300 uppercase tracking-wide flex items-center">
                         Shared Accounting Model
                     </p>
-                    <p className="text-sm text-blue-700 dark:text-blue-400 mt-1 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-blue-700 dark:text-blue-400 mt-1 leading-relaxed">
                         Costs can be split Equally among all active members or via Custom Amount for each member.
                         Managers can choose the split method when adding a cost.
                     </p>
@@ -136,31 +136,31 @@ export default function CostsPage() {
             </div>
 
             {/* Month Selector */}
-            <div className="bg-card rounded-2xl shadow-sm border border-border p-5 flex items-center space-x-4">
+            <div className="bg-card rounded-2xl shadow-sm border border-border p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
                 <label className="text-xs font-black text-muted-foreground uppercase tracking-widest whitespace-nowrap">Active Month</label>
                 <input
                     type="month"
                     value={selectedMonth}
                     onChange={(e) => setSelectedMonth(e.target.value)}
-                    className="bg-muted border-none rounded-xl px-4 py-2 text-sm font-bold text-foreground focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer"
+                    className="bg-muted border-none rounded-xl px-4 py-2 text-sm font-bold text-foreground focus:ring-2 focus:ring-primary outline-none transition-all cursor-pointer w-full sm:w-auto"
                 />
             </div>
 
             {/* Costs List */}
             <div className="bg-card rounded-3xl shadow-sm border border-border overflow-hidden">
-                <div className="p-6 bg-muted/30 border-b border-border flex items-center justify-between">
+                <div className="p-4 sm:p-6 bg-muted/30 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
                         <h3 className="text-lg font-black text-foreground tracking-tight">
                             Expenses for {new Date(selectedMonth + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                         </h3>
                         <p className="text-xs text-muted-foreground font-medium">All approved shared costs for this period</p>
                     </div>
-                    <div className="bg-card px-4 py-1.5 rounded-xl border border-border shadow-sm">
+                    <div className="bg-card px-4 py-1.5 rounded-xl border border-border shadow-sm self-start sm:self-auto">
                         <span className="text-xs font-black text-muted-foreground uppercase tracking-widest mr-2">Count:</span>
                         <span className="font-black text-primary">{costs?.length || 0}</span>
                     </div>
                 </div>
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                     {isLoading ? (
                         <div className="text-center py-20">
                             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mx-auto"></div>
@@ -172,15 +172,15 @@ export default function CostsPage() {
                                 {costs.map((cost) => (
                                     <div
                                         key={cost.id}
-                                        className="flex items-center justify-between p-5 bg-card border border-border rounded-2xl hover:border-primary/50 hover:shadow-md transition-all group"
+                                        className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 bg-card border border-border rounded-2xl hover:border-primary/50 hover:shadow-md transition-all group gap-4"
                                     >
                                         <div className="flex items-center space-x-4">
-                                            <div className="w-12 h-12 bg-muted rounded-2xl flex items-center justify-center text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-muted rounded-2xl flex items-center justify-center text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors flex-shrink-0">
                                                 <DollarSign className="w-5 h-5" />
                                             </div>
-                                            <div>
-                                                <p className="font-black text-foreground text-lg tracking-tight">{cost.name}</p>
-                                                <div className="flex items-center mt-1 space-x-3">
+                                            <div className="min-w-0">
+                                                <p className="font-black text-foreground text-base sm:text-lg tracking-tight truncate">{cost.name}</p>
+                                                <div className="flex flex-wrap items-center mt-1 gap-2">
                                                     <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${cost.status === 'approved' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' : 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'}`}>
                                                         {cost.status}
                                                     </span>
@@ -189,12 +189,11 @@ export default function CostsPage() {
                                                             Custom Split
                                                         </span>
                                                     )}
-                                                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Added {new Date().toLocaleDateString()}</span>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="flex items-center space-x-6">
-                                            <p className="text-2xl font-black text-foreground">{formatCurrency(cost.amount || 0)}</p>
+                                        <div className="flex items-center justify-between sm:justify-end sm:space-x-6 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-border">
+                                            <p className="text-xl sm:text-2xl font-black text-foreground">{formatCurrency(cost.amount || 0)}</p>
                                             {isManager && (
                                                 <button
                                                     onClick={() => cost.id && handleDelete(cost.id)}
@@ -207,11 +206,11 @@ export default function CostsPage() {
                                     </div>
                                 ))}
                             </div>
-                            <div className="mt-8 p-8 bg-card border-2 border-primary/10 rounded-3xl flex flex-col md:flex-row items-center justify-between shadow-sm relative overflow-hidden">
+                            <div className="mt-8 p-6 sm:p-8 bg-card border-2 border-primary/10 rounded-3xl flex flex-col sm:flex-row items-center justify-between shadow-sm relative overflow-hidden text-center sm:text-left">
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-                                <div className="mb-4 md:mb-0 relative z-10">
-                                    <p className="text-muted-foreground font-black uppercase text-xs tracking-widest">Total Monthly Cost</p>
-                                    <h4 className="text-4xl font-black text-primary mt-1">{formatCurrency(costs?.reduce((sum: number, cost: ServiceCost) => sum + cost.amount, 0) || 0)}</h4>
+                                <div className="mb-4 sm:mb-0 relative z-10">
+                                    <p className="text-muted-foreground font-black uppercase text-[10px] sm:text-xs tracking-widest">Total Monthly Cost</p>
+                                    <h4 className="text-3xl sm:text-4xl font-black text-primary mt-1">{formatCurrency(costs?.reduce((sum: number, cost: ServiceCost) => sum + cost.amount, 0) || 0)}</h4>
                                 </div>
                             </div>
                         </div>

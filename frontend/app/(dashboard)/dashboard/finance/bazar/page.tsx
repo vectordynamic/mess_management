@@ -57,9 +57,12 @@ export default function BazarPage() {
             toast.error('Please select a mess first');
             return;
         }
+
         const currentMonth = new Date().toISOString().slice(0, 7);
+        // Ensure date is in ISO format for backend parsing (Go time.Time)
         createMutation.mutate({
             ...data,
+            date: new Date(data.date).toISOString() as any,
             mess_id: currentMessId,
             buyer_id: '', // Will be set by backend from auth
             month: currentMonth,

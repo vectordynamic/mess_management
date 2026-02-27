@@ -6,10 +6,11 @@ import { Home, DollarSign, Users, FileText, Settings, LogOut, Utensils, CreditCa
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
 import { useLogout } from '@/hooks/useAuth';
 import type { User } from '@/types/auth';
+import { useMessContext } from '@/contexts/MessContext';
 
 const navItems = [
     { href: '/dashboard', icon: Home, label: 'Dashboard' },
-    { href: '/dashboard/mess', icon: Users, label: 'Mess Management' },
+    { href: '/dashboard/mess', icon: Users, label: 'Mess Management', hasBadge: true },
     { href: '/dashboard/finance/meals', icon: Utensils, label: 'Meal Sheet' },
     { href: '/dashboard/finance/costs', icon: DollarSign, label: 'Service Costs' },
     { href: '/dashboard/feed', icon: FileText, label: 'Bachelor Feed' }, // Using FileText as a placeholder or Rss if imported
@@ -21,6 +22,7 @@ const navItems = [
 export function DesktopSidebar({ user }: { user: User }) {
     const pathname = usePathname();
     const logout = useLogout();
+    const { pendingRequestsCount } = useMessContext();
 
     return (
         <aside className="fixed inset-y-0 left-0 w-64 bg-card shadow-lg z-50 border-r border-border">
@@ -36,7 +38,7 @@ export function DesktopSidebar({ user }: { user: User }) {
 
                 {/* Navigation */}
                 <nav className="flex-1 p-4 space-y-2">
-                    {navItems.map(({ href, icon: Icon, label }) => {
+                    {navItems.map(({ href, icon: Icon, label, hasBadge }) => {
                         const isActive = href === pathname ||
                             (href !== '/dashboard' && href !== '/dashboard/finance' && pathname.startsWith(href));
 
@@ -44,13 +46,20 @@ export function DesktopSidebar({ user }: { user: User }) {
                             <Link
                                 key={href}
                                 href={href}
-                                className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
+                                className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 ${isActive
                                     ? 'bg-primary text-primary-foreground shadow-md font-bold'
                                     : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                                     }`}
                             >
-                                <Icon className="w-5 h-5" />
-                                <span className="tracking-tight">{label}</span>
+                                <div className="flex items-center space-x-3">
+                                    <Icon className="w-5 h-5" />
+                                    <span className="tracking-tight">{label}</span>
+                                </div>
+                                {hasBadge && pendingRequestsCount > 0 && (
+                                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-black text-white shadow-lg animate-pulse ring-2 ring-background">
+                                        {pendingRequestsCount}
+                                    </span>
+                                )}
                             </Link>
                         );
                     })}

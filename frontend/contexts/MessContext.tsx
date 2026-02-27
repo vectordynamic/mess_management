@@ -12,6 +12,8 @@ interface MessContextType {
     isAdmin: boolean;
     isManager: boolean;
     isMemberOfAnyMess: boolean;
+    pendingRequestsCount: number;
+    refreshPendingRequests: () => Promise<void>;
     user: any; // Using any for now to avoid circular deps or complex type imports if not readily available, or use User type if imported.
 }
 
@@ -23,6 +25,22 @@ export function MessProvider({ children }: { children: React.ReactNode }) {
     const [userRole, setUserRole] = useState<Role | null>(null);
     const [isAdmin, setIsAdmin] = useState(false);
     const [isManager, setIsManager] = useState(false);
+    const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
+    const isMemberOfAnyMess = !!user?.messes && user.messes.length > 0;
+
+    const refreshPendingRequests = async () => {
+        if (currentMessId && isAdmin) {
+            try {
+                const requests = await messService.getRequests(currentMessId);
+                setPendingRequestsCount(requests.length);
+            } catch (error) {
+                console.error('Failed to fetch pending requests count:', error);
+                setPendingRequestsCount(0);
+            }
+        } else {
+            setPendingRequestsCount(0);
+        }
+    };
 
     // Auto-select first mess if user has messes
     useEffect(() => {
@@ -40,13 +58,10 @@ export function MessProvider({ children }: { children: React.ReactNode }) {
                     const member = mess.members.find(m => m.user_id === user.id);
                     if (member) {
                         const roles = member.roles as Role[];
-                        console.log('MessContext: User ID:', user.id, 'found in mess members. Roles:', roles);
                         setUserRole(roles[0] || 'member');
                         setIsAdmin(roles.includes('admin'));
                         setIsManager(roles.includes('manager'));
-                        console.log('MessContext: Permissions set - isManager:', roles.includes('manager'), 'isAdmin:', roles.includes('admin'));
                     } else {
-                        console.log('MessContext: User ID:', user.id, 'NOT found in mess members');
                         setUserRole('member');
                         setIsAdmin(false);
                         setIsManager(false);
@@ -66,6 +81,11 @@ export function MessProvider({ children }: { children: React.ReactNode }) {
         fetchRole();
     }, [currentMessId, user?.messes, user?.id]);
 
+    // Fetch pending requests count when mess or admin status changes
+    useEffect(() => {
+        refreshPendingRequests();
+    }, [currentMessId, isAdmin]);
+
     return (
         <MessContext.Provider
             value={{
@@ -74,7 +94,9 @@ export function MessProvider({ children }: { children: React.ReactNode }) {
                 userRole,
                 isAdmin,
                 isManager,
-                isMemberOfAnyMess: !!user?.messes && user.messes.length > 0,
+                isMemberOfAnyMess,
+                pendingRequestsCount,
+                refreshPendingRequests,
                 user,
             }}
         >
