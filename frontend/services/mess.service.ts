@@ -17,7 +17,7 @@ export interface MessMember {
     status: 'active' | 'pending' | 'left';
 }
 
-export type Role = 'admin' | 'manager' | 'member';
+export type Role = 'admin' | 'manager' | 'meal_manager' | 'member';
 
 export interface JoinRequest {
     user_id: string;
